@@ -1,0 +1,68 @@
+:root {
+  --text-color: #000000;
+}
+
+body
+{
+	margin: 0;
+}
+
+A:link 
+{ 
+	text-decoration: none; /* Убирает подчеркивание для ссылок */
+	color: var(--text-color);
+} 
+A:visited 
+{ 
+	text-decoration: none; 
+	color: var(--text-color);
+} 
+A:active 
+{ 
+	text-decoration: none; 
+	color: var(--text-color);
+}
+A:hover 
+{
+	text-decoration: underline; /* Делает ссылку подчеркнутой при наведении на нее курсора */
+	color: blue; /* Цвет ссылки */
+}
+
+.site_main 
+{
+	background: #e0e0e0;
+	width: 1125px;
+	margin-left: auto;
+    margin-right: auto;
+	padding: 10px 0px 0px 0px;
+}
+
+.game_view
+{
+	display:inline-block;
+	margin: 0px 10px 20px 10px;
+	background: #ffffff;
+	width: 205px;
+	height: 305px;
+}
+
+.game_image
+{
+	width: 205px;
+	height: 205px;
+}
+
+.game_name
+{
+	margin-left: auto;
+    margin-right: auto;
+	display: block;
+	overflow: hidden;
+	font-family: 'Open Sans Condensed',sans-serif;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 20px;
+	width: 195px;
+	height: 60px;
+	text-align: left;
+}
