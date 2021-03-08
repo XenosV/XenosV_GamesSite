@@ -9,6 +9,10 @@ class GamesBase
 		{
 			die('mysql ошибка соединения с базой данных');
 		}
+		
+		$this->SelectAllPlatforms();
+		$this->SelectAllGenres();
+		$this->SelectAllYears();
 	}
 	
 	public function SelectGameBase($game_genre, $game_platform)
@@ -106,7 +110,59 @@ class GamesBase
 		return $this->sql_games_request->fetch_array(MYSQLI_ASSOC);
 	}
 	
+	public function getNextPlatform()
+	{
+		return $this->sql_platforms_request->fetch_array(MYSQLI_ASSOC);
+	}
+	private function SelectAllPlatforms()
+	{
+		$this->sql_platforms_request = $this->mysqli->query(
+		"SELECT 
+			* 
+		FROM 
+			`platforms`
+		ORDER BY 
+			Sort"
+		);
+	}
+	
+	public function getNextGenre()
+	{
+		return $this->sql_genre_request->fetch_array(MYSQLI_ASSOC);
+	}
+	private function SelectAllGenres()
+	{
+		$this->sql_genre_request = $this->mysqli->query(
+		"SELECT 
+			* 
+		FROM 
+			`genres`
+		ORDER BY 
+			Sort"
+		);
+	}
+	
+	public function getNextYear()
+	{
+		return $this->sql_year_request->fetch_array(MYSQLI_ASSOC);
+	}
+	
+	private function SelectAllYears()
+	{
+		$this->sql_year_request = $this->mysqli->query(
+		"SELECT
+			Year
+		FROM
+			games
+		GROUP BY 
+			Year"
+		);
+	}
+	
 	private $mysqli;
 	private $sql_games_request;
+	private $sql_platforms_request;
+	private $sql_genre_request;
+	private $sql_year_request;
 };
 ?>

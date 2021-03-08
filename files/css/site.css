@@ -1,5 +1,5 @@
 :root {
-  --text-color: #000000;
+	font-family: 'Open Sans', sans-serif;
 }
 
 body
@@ -9,60 +9,133 @@ body
 
 A:link 
 { 
-	text-decoration: none; /* Убирает подчеркивание для ссылок */
-	color: var(--text-color);
+	text-decoration: none;
 } 
 A:visited 
 { 
-	text-decoration: none; 
-	color: var(--text-color);
+	text-decoration: none;
 } 
 A:active 
 { 
-	text-decoration: none; 
-	color: var(--text-color);
+	text-decoration: none;
 }
 A:hover 
 {
-	text-decoration: underline; /* Делает ссылку подчеркнутой при наведении на нее курсора */
-	color: blue; /* Цвет ссылки */
+	text-decoration: none;
 }
 
-.site_main 
+.SiteMain 
 {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
 	background: #e0e0e0;
 	width: 1125px;
-	margin-left: auto;
-    margin-right: auto;
 	padding: 10px 0px 0px 0px;
+	margin: 0 auto;
 }
 
-.game_view
+.GameView
 {
 	display:inline-block;
 	margin: 0px 10px 20px 10px;
 	background: #ffffff;
 	width: 205px;
-	height: 305px;
+	height: 350px;
 }
 
-.game_image
+.GameImage
 {
 	width: 205px;
 	height: 205px;
 }
 
-.game_name
+.GameName
 {
 	margin-left: auto;
     margin-right: auto;
 	display: block;
 	overflow: hidden;
-	font-family: 'Open Sans Condensed',sans-serif;
 	font-weight: 700;
 	font-size: 16px;
 	line-height: 20px;
 	width: 195px;
 	height: 60px;
 	text-align: left;
+	color: var(--text-color);
+}
+
+.LeftSorter
+{
+	background: #e0e0e0;
+	width: 350px;
+	margin: 0 10px 10px 10px;
+}
+
+.RightSorter
+{
+	background: #e0e0e0;
+	width: 350px;
+	margin: 0px 10px 10px 10px; 
+}
+
+.SiteBase
+{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+
+.TextSort
+{
+	margin: 10px auto;
+	text-align: center;
+}
+
+.ButtonSort
+{
+	padding: 1px;
+	margin: 0px 0px 5px 0px;
+	display: block;
+    width: 75px;
+    height: 25px;
+	font-size: 10px;
+    text-align: center;
+    line-height: 25px;
+	border-color: #000000;
+	border: 1px solid;
+	color: white;
+	background: #A0A0A0
+}
+
+.ButtonContaner
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	background: #e0e0e0;
+}
+
+.PlatformsViewContainer
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	width: 205px;
+}
+
+.PlatformsView
+{
+	flex-grow: 1;
+	padding: 1px 3px 1px 3px;
+	margin: 0px 0px 2px 0px;
+    height: 10px;
+	font-size: 8px;
+    text-align: center;
+    line-height: 10px;
+	border-color: #000000;
+	border: 1px solid;
+	color: white;
+	background: #A0A0A0
 }
