@@ -15,6 +15,26 @@ class GamesBase
 		$this->SelectAllYears();
 	}
 	
+	public function getGameInfo($id)
+	{
+		$request = $this->mysqli->query(
+		"SELECT
+			games.*, 
+			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC, platforms.Sort SEPARATOR '/') as plt_cc, 
+			group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
+		FROM
+			games 
+				join games_platforms on games_platforms.Game_ID = games.ID 
+				join platforms on platforms.ID = games_platforms.Platform_ID 
+				join games_genres on games_genres.Game_ID = games.ID 
+				join genres on genres.ID = games_genres.Genre_ID 
+		WHERE
+			games.ID = $id"
+		);
+		
+		return $request->fetch_array(MYSQLI_ASSOC);
+	}
+	
 	public function SelectGameBase($game_genre, $game_platform)
 	{
 		if ($game_genre <= 1 && $game_platform <= 1)

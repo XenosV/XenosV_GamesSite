@@ -1,6 +1,7 @@
 <?php
 
 define("GAME_PATH", "files/games/");
+include_once('mysql.php');
 
 function NameForFile($name)
 {
@@ -9,37 +10,97 @@ function NameForFile($name)
 
 class MainHtml
 {
+	public function CreateMainGalery()
+	{
+		echo "<div class='SiteMain'>";
+			if ($this->sort_id != 0)
+			{
+				$game_info = $this->games_base->getGameInfo($this->sort_id);
+				
+				echo "<div>";
+					$video_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/video/';
+					$video_files = scandir($video_path);
+					
+					if (count($video_files) > 2)
+					{
+						for ($i = 0; $i < count($video_files); $i++)
+						{
+							if (($video_files[$i] != ".") && ($video_files[$i] != ".."))
+							{
+								$video_name = $video_path.$video_files[$i].'#t=0.0';
+								echo "<video style=\"display:block; margin: 0 auto; width: 1080px;\" controls=\"controls\" preload=\"auto\"><source src=\"$video_name\"></video>";
+							}
+						}
+					}
+				echo "</div>";
+				
+				echo "<div class='GamePicture'>";					
+					$pic_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/pic/';
+					$pic_files = scandir($pic_path);
+					
+					if (count($pic_files) > 3)
+					{
+						for ($i = 0; $i < count($pic_files); $i++)
+						{
+							if (($pic_files[$i] != ".") && ($pic_files[$i] != "..") && ($pic_files[$i] != "small"))
+							{
+								$pic_name = $pic_path.$pic_files[$i];
+								$pic_name_small = $pic_path.'small/'.$pic_files[$i];
+								$size = getimagesize($pic_name_small);
+								$size[0] /= 2;
+								$size[1] /= 2;
+								echo "<div class='ImagesForGalery' width='$size[0]' height = $size[1]><img src=\"$pic_name_small\" width='$size[0]' height = $size[1] /></div>";
+							}
+						}
+					}
+				echo "</div>";
+			}
+			else
+			{
+				$this->games_base->SelectGameBase($this->getSortGenre(), $this->getSortPlatform());
+					
+				while($game_details = $this->games_base->getNextGameDetail())
+				{
+					echo "<div class='GameView'>";
+						$name = $game_details['Name'];
+						$id = $game_details['ID'];
+						$icon_path = GAME_PATH.NameForFile($game_details['Name'])."_".$game_details['ID']."/cover.png";
+						$platforms = $game_details['plt_cc'];
+						$kw_platforms = preg_split("[/]", $platforms);
+						echo "<a href = 'index.php?id=$id' class='GameImage'><img class='GameImage' src=\"$icon_path\" data-src='$icon_path'></img></a>";
+						echo "<a href = 'index.php?id=$id' class='GameName'>$name</a>";
+						echo "<div class='PlatformsViewContainer'>";
+						foreach ($kw_platforms as $key => $value)
+						{
+							$color = $this->getPlatformColor($value);
+							echo "<p class='PlatformsView' style='background: #$color'>$value</p>";
+						}
+						echo "</div>";
+					echo "</div>";
+				}
+			}
+		echo "</div>"; // <div class='SiteMain'>
+	}
+	
 	public function MainHtml()
 	{
-		if (isset($_GET['name']))
-			$this->sort_name = $_GET['name'];
-		else
-			$this->sort_name = 'none';
-		
 		if (isset($_GET['id']))
 			$this->sort_id = $_GET['id'];
 		else
-			$this->sort_id = -1;
+			$this->sort_id = 0;
 		
 		if (isset($_GET['genre']))
 			$this->sort_genre = $_GET['genre'];
 		else
 			$this->sort_genre = 0;
 		
-		if (isset($_GET['series']))
-			$this->sort_series = $_GET['series'];
-		else
-			$this->sort_series = 'none';
-		
 		if (isset($_GET['platform']))
 			$this->sort_platform = $_GET['platform'];
 		else
 			$this->sort_platform = 0;
+		
+		$this->games_base = new GamesBase('localhost', 'XenosV', '5uy$_H3X%a?ykwE', 'mygames');
 	}
-	
-	public function getSortName(){ return $this->sort_name; }
-	public function getSortNameSelf(){ return htmlspecialchars($this->sort_name); }
-	public function getSortNameFile(){ return NameForFile($this->getSortNameSelf()); }
 	
 	public function getSortId(){ return $this->sort_id; }
 	public function getSortIdSelf(){ return htmlspecialchars($this->sort_id); }
@@ -49,13 +110,24 @@ class MainHtml
 	public function getSortGenreSelf(){ return $this->sort_genre; }
 	public function getSortGenreFile(){ return $this->sort_genre; }
 	
-	public function getSortSeries(){ return $this->sort_series; }
-	public function getSortSeriesSelf(){ return htmlspecialchars($this->sort_series); }
-	public function getSortSeriesFile(){ return NameForFile($this->getSortSeriesSelf()); }
-	
 	public function getSortPlatform(){ return $this->sort_platform; }
 	public function getSortPlatformSelf(){ return $this->sort_platform; }
 	public function getSortPlatformFile(){ return $this->sort_platform; }
+	
+	// tmp //
+	public function getNextPlatform()
+	{
+		return $this->games_base->getNextPlatform();
+	}
+	public function getNextGenre()
+	{
+		return $this->games_base->getNextGenre();
+	}
+	public function getNextYear()
+	{
+		return $this->games_base->getNextYear();
+	}
+	/////////
 	
 	public function AddPlatformColor($name, $color)
 	{
@@ -72,17 +144,14 @@ class MainHtml
 	private $sort_genre;
 	private $sort_series;
 	private $sort_platform;
+	private $games_base;
 };
-
-include_once('mysql.php');
 	
 $main_html = new MainHtml();
 	
 $cache_file = 'cache/';
-	$cache_file .= '_'.htmlspecialchars($main_html->getSortNameFile());
 	$cache_file .= '_'.htmlspecialchars($main_html->getSortIdFile());
 	$cache_file .= '_'.htmlspecialchars($main_html->getSortGenreFile());
-	$cache_file .= '_'.htmlspecialchars($main_html->getSortSeriesFile());
 	$cache_file .= '_'.htmlspecialchars($main_html->getSortPlatformFile());
 	$cache_file .= '_.cache';
 
@@ -111,8 +180,6 @@ ob_start();
 	</head>
 	<body>
 	<?php
-	
-		$games_base = new GamesBase('localhost', 'XenosV', '5uy$_H3X%a?ykwE', 'mygames');
 		
 		echo "<div class='SiteBase'>";
 			echo "<div class='LeftSorter'>";
@@ -120,7 +187,7 @@ ob_start();
 					echo "<p class='TextSort'>Сортировка по платформам</p>";
 				echo "</div>";
 				echo "<div class='ButtonContaner'>";
-					while ($platform_detail = $games_base->getNextPlatform())
+					while ($platform_detail = $main_html->getNextPlatform())
 					{
 						$platform_name_short = $platform_detail['Platforms'];
 						$platform_name = $platform_detail['Name'];
@@ -135,7 +202,7 @@ ob_start();
 					echo "<p class='TextSort'>Сортировка по жанрам</p>";
 				echo "</div>";
 				echo "<div class='ButtonContaner'>";
-					while ($genre_details = $games_base->getNextGenre())
+					while ($genre_details = $main_html->getNextGenre())
 					{
 						$genre_name_short = $genre_details['Genres'];
 						$genre_name = $genre_details['Name'];
@@ -147,28 +214,7 @@ ob_start();
 				echo "</div>";
 			echo "</div>"; // <div class='LeftSorter'>
 			
-			echo "<div class='SiteMain'>";
-				$games_base->SelectGameBase($main_html->getSortGenre(), $main_html->getSortPlatform());
-				
-				while($game_details = $games_base->getNextGameDetail())
-				{
-					echo "<div class='GameView'>";
-						$name = NameForFile($game_details['Name']);
-						$icon_path = GAME_PATH.$name."_".$game_details['ID']."/cover.png";
-						$platforms = $game_details['plt_cc'];
-						$kw_platforms = preg_split("[/]", $platforms);
-						echo "<img class='GameImage' src = \"$icon_path\" data-src = '$icon_path'></img>";
-						echo "<a href = 'index.php' class='GameName'>$name</a>";
-						echo "<div class='PlatformsViewContainer'>";
-						foreach ($kw_platforms as $key => $value)
-						{
-							$color = $main_html->getPlatformColor($value);
-							echo "<p class='PlatformsView' style='background: #$color'>$value</p>";
-						}
-						echo "</div>";
-					echo "</div>";
-				}
-			echo "</div>"; // <div class='SiteMain'>
+			$main_html->CreateMainGalery();
 			
 			echo "<div class='RightSorter'>";
 				echo "<div>";
@@ -176,7 +222,7 @@ ob_start();
 				echo "</div>";
 				echo "<div class='ButtonContaner'>";
 					echo "<a class='ButtonSort'>All</a>";
-					while ($year_detail = $games_base->getNextYear())
+					while ($year_detail = $main_html->getNextYear())
 					{
 						$year_name = $year_detail['Year'];
 						
