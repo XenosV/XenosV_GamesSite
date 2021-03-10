@@ -49,7 +49,7 @@ class MainHtml
 								$size = getimagesize($pic_name_small);
 								$size[0] /= 2;
 								$size[1] /= 2;
-								echo "<div class='ImagesForGalery' width='$size[0]' height = $size[1]><img src=\"$pic_name_small\" width='$size[0]' height = $size[1] /></div>";
+								echo "<div class='ImagesForGalery'><img src=\"$pic_name_small\" width='$size[0]' height = $size[1] /></div>";
 							}
 						}
 					}
@@ -195,7 +195,7 @@ ob_start();
 						$platform_id = $platform_detail['ID'];;
 						
 						$main_html->AddPlatformColor($platform_name_short, $platform_color);
-						echo "<a href='index.php?platform=$platform_id' class='ButtonSort' style='background: #$platform_color;'>$platform_name_short</a>";
+						echo "<a href='index.php?platform=$platform_id' class='ButtonSort'>$platform_name_short</a>";
 					}
 				echo "</div>";
 				echo "<div>";
@@ -209,7 +209,7 @@ ob_start();
 						$genre_color = $genre_details['Color'];
 						$genre_id = $genre_details['ID'];;
 						
-						echo "<a href='index.php?genre=$genre_id' class='ButtonSort' style='background: #$genre_color;'>$genre_name_short</a>";
+						echo "<a href='index.php?genre=$genre_id' class='ButtonSort'>$genre_name_short</a>";
 					}
 				echo "</div>";
 			echo "</div>"; // <div class='LeftSorter'>

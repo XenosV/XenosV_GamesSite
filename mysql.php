@@ -20,7 +20,7 @@ class GamesBase
 		$request = $this->mysqli->query(
 		"SELECT
 			games.*, 
-			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC, platforms.Sort SEPARATOR '/') as plt_cc, 
+			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
 			group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 		FROM
 			games 
@@ -42,7 +42,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 			"SELECT
 				games.*, 
-				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC, platforms.Sort SEPARATOR '/') as plt_cc, 
+				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
 				group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 			FROM
 				games 
@@ -58,9 +58,9 @@ class GamesBase
 				CASE
 					WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
 					THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
-					ELSE games.Series
+					ELSE games.Name
 				END,
-				games.Sort"
+				games.Name"
 			);
 		}
 		else if ($game_genre != 0)
@@ -68,7 +68,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*, 
-					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC, platforms.Sort SEPARATOR '/') as plt_cc, 
+					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
 					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc 
 				FROM
 					games 
@@ -86,9 +86,9 @@ class GamesBase
 					CASE
 						WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
 						THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
-						ELSE games.Series
+						ELSE games.Name
 					END,
-					games.Sort"
+					games.Name"
 			);
 		}
 		else if ($game_platform != 0)
@@ -96,7 +96,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*, 
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Generation DESC, platforms_t.Sort SEPARATOR '/') as plt_cc, 
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
 					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 				FROM
 					games 
@@ -114,9 +114,9 @@ class GamesBase
 					CASE
 						WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
 						THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
-						ELSE games.Series
+						ELSE games.Name
 					END,
-					games.Sort"
+					games.Name"
 			);
 		}
 		else
@@ -142,7 +142,7 @@ class GamesBase
 		FROM 
 			`platforms`
 		ORDER BY 
-			Sort"
+			Platforms"
 		);
 	}
 	
@@ -158,7 +158,7 @@ class GamesBase
 		FROM 
 			`genres`
 		ORDER BY 
-			Sort"
+			Genres"
 		);
 	}
 	
