@@ -56,8 +56,8 @@ class GamesBase
 				games.ID 
 			ORDER BY
 				CASE
-					WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
-					THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
+					WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
+					THEN TRIM(SUBSTR(games.Name, INSTR(games.Name ,' ')))
 					ELSE games.Name
 				END,
 				games.Name"
@@ -84,8 +84,8 @@ class GamesBase
 					games.ID 
 				ORDER BY
 					CASE
-						WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
-						THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
+						WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
+						THEN TRIM(SUBSTR(games.Name, INSTR(games.Name ,' ')))
 						ELSE games.Name
 					END,
 					games.Name"
@@ -96,7 +96,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*, 
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR '/') as plt_cc, 
 					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 				FROM
 					games 
@@ -112,8 +112,8 @@ class GamesBase
 					games.ID 
 				ORDER BY
 					CASE
-						WHEN games.Series REGEXP '^(A|An|The)[[:space:]]' = 1
-						THEN TRIM(SUBSTR(games.Series, INSTR(games.Series ,' ')))
+						WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
+						THEN TRIM(SUBSTR(games.Name, INSTR(games.Name ,' ')))
 						ELSE games.Name
 					END,
 					games.Name"
@@ -142,7 +142,7 @@ class GamesBase
 		FROM 
 			`platforms`
 		ORDER BY 
-			Platforms"
+			Sort"
 		);
 	}
 	
@@ -158,7 +158,7 @@ class GamesBase
 		FROM 
 			`genres`
 		ORDER BY 
-			Genres"
+			Sort"
 		);
 	}
 	
