@@ -19,7 +19,14 @@ class MainHtml
 				
 				echo "<div>";
 					$video_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/video/';
-					$video_files = scandir($video_path);
+					try
+					{
+						$video_files = scandir($video_path);
+					}
+					catch (Exception $e)
+					{
+						echo $e->getMessage();
+					}
 					
 					if (count($video_files) > 2)
 					{
@@ -67,14 +74,22 @@ class MainHtml
 						$icon_path = GAME_PATH.NameForFile($game_details['Name'])."_".$game_details['ID']."/cover.png";
 						$platforms = $game_details['plt_cc'];
 						$kw_platforms = preg_split("[/]", $platforms);
-						echo "<a href = 'index.php?id=$id' class='GameImage'><img class='GameImage' src=\"$icon_path\" data-src='$icon_path'></img></a>";
-						echo "<a href = 'index.php?id=$id' class='GameName'>$name</a>";
-						echo "<div class='PlatformsViewContainer'>";
+						echo "<a href = 'index.php?id=$id' class='GameViewImage'><img class='GameViewImage' src=\"$icon_path\" data-src='$icon_path'></img></a>";
+						echo "<a href = 'index.php?id=$id' class='GameViewName'>$name</a>";
+						echo "<div class='GameViewPlatformsContainer'>";
 						foreach ($kw_platforms as $key => $value)
 						{
 							$color = $this->getPlatformColor($value);
-							echo "<p class='PlatformsView' style='background: #$color'>$value</p>";
+							echo "<p class='GameViewPlatforms' style='background: #$color'>$value</p>";
 						}
+						echo "</div>";
+						$genres = $game_details['gen_cc'];
+						echo "<p class='GameViewGenres'>$genres</p>";
+						$year = $game_details['Year'];
+						$rating = 'files\img\rating\rating'.$game_details['Rating'].'.png';
+						$complete = 'files\img\completed\completed'.$game_details['Completed'].'.png';
+						echo "<div class=GameViewSortContainer>";
+							echo "<img src=\"$complete\" width=20px height=20px/><img src=\"$rating\" width=100px height=20px style='margin: 0 0 0 30px'/><p class='GameViewYear'>$year</p>";
 						echo "</div>";
 					echo "</div>";
 				}

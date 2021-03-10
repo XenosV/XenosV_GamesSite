@@ -41,18 +41,18 @@ A:hover
 	margin: 0px 10px 20px 10px;
 	background: #ffffff;
 	width: 205px;
-	height: 350px;
+	height: 352px;
 	border-color: #404040;
 	border: 1px solid;
 }
 
-.GameImage
+.GameViewImage
 {
 	width: 205px;
 	height: 205px;
 }
 
-.GameName
+.GameViewName
 {
 	margin-left: auto;
 	margin-right: auto;
@@ -118,7 +118,7 @@ A:hover
 	background: #e0e0e0;
 }
 
-.PlatformsViewContainer
+.GameViewPlatformsContainer
 {
 	display: flex;
 	flex-wrap: wrap;
@@ -127,7 +127,7 @@ A:hover
 	height: 42px;
 }
 
-.PlatformsView
+.GameViewPlatforms
 {
 	flex-grow: 1;
 	padding: 1px 3px 1px 3px;
@@ -153,4 +153,30 @@ A:hover
 .ImagesForGalery
 {
 	margin: 0px 1px 2px 1px;
+}
+
+.GameViewGenres
+{
+	width: 100%;
+	margin: 0px;
+	padding: 1px;
+	height: 14px;
+	font-size: 12px;
+}
+
+.GameViewSortContainer
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	width: 195px;
+	margin: 2px 5px 1px 5px
+}
+
+.GameViewYear
+{
+	margin: 0;
+	height: 14px;
+	font-size: 12px;
 }
