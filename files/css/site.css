@@ -48,6 +48,15 @@ A:hover
 
 .GameViewImage
 {
+	position: relative;
+	width: 205px;
+	height: 205px;
+	margin-top: 0px;
+}
+
+.GameViewImageDigital
+{
+	position: absolute;
 	width: 205px;
 	height: 205px;
 }

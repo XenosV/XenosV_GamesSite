@@ -1,0 +1,16 @@
+.GameView
+{
+	height: 384px;
+}
+
+.GameViewImageDigital
+{
+	height: 237px;
+}
+
+.GameViewImage
+{
+	height: 237px;
+	margin-top: 22px;
+	margin-bottom: 10px;
+}

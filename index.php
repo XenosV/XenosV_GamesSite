@@ -69,12 +69,36 @@ class MainHtml
 				while($game_details = $this->games_base->getNextGameDetail())
 				{
 					echo "<div class='GameView'>";
+					
 						$name = $game_details['Name'];
 						$id = $game_details['ID'];
-						$icon_path = GAME_PATH.NameForFile($game_details['Name'])."_".$game_details['ID']."/cover.png";
 						$platforms = $game_details['plt_cc'];
 						$kw_platforms = preg_split("[/]", $platforms);
-						echo "<a href = 'index.php?id=$id' class='GameViewImage'><img class='GameViewImage' src=\"$icon_path\" data-src='$icon_path'></img></a>";
+						$genres = $game_details['gen_cc'];
+						$year = $game_details['Year'];
+						
+						$cover_name = "/cover.png";
+						$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
+						if ($this->sort_platform > 1)
+						{
+							if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".png"))
+							{
+								$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
+								if (file_exists($icon_path_digital))
+								{
+								$style = "style=\"height:205px;\"";
+									echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
+								}
+							}
+							else
+							{
+								$cover_name = "/cover_".$this->sort_platform_info['Platforms'].".png";
+							}
+						}
+
+						$icon_path = GAME_PATH.NameForFile($name)."_".$id.$cover_name;
+						echo "<a href = 'index.php?id=$id' $style class='GameViewImage'><img class='GameViewImage' $style src=\"$icon_path\"></img></a>";
+						
 						echo "<a href = 'index.php?id=$id' class='GameViewName'>$name</a>";
 						echo "<div class='GameViewPlatformsContainer'>";
 						foreach ($kw_platforms as $key => $value)
@@ -83,9 +107,7 @@ class MainHtml
 							echo "<p class='GameViewPlatforms' style='background: #$color'>$value</p>";
 						}
 						echo "</div>";
-						$genres = $game_details['gen_cc'];
 						echo "<p class='GameViewGenres'>$genres</p>";
-						$year = $game_details['Year'];
 						$rating = 'files\img\rating\rating'.$game_details['Rating'].'.png';
 						$complete = 'files\img\completed\completed'.$game_details['Completed'].'.png';
 						echo "<div class=GameViewSortContainer>";
@@ -99,6 +121,8 @@ class MainHtml
 	
 	public function MainHtml()
 	{
+		$this->games_base = new GamesBase('localhost', 'XenosV', '5uy$_H3X%a?ykwE', 'mygames');
+		
 		if (isset($_GET['id']))
 			$this->sort_id = $_GET['id'];
 		else
@@ -110,11 +134,12 @@ class MainHtml
 			$this->sort_genre = 0;
 		
 		if (isset($_GET['platform']))
+		{
 			$this->sort_platform = $_GET['platform'];
+			$this->sort_platform_info = $this->games_base->getPlatformInfo($this->sort_platform);
+		}
 		else
-			$this->sort_platform = 0;
-		
-		$this->games_base = new GamesBase('localhost', 'XenosV', '5uy$_H3X%a?ykwE', 'mygames');
+			$this->sort_platform = 0;	
 	}
 	
 	public function getSortId(){ return $this->sort_id; }
@@ -153,12 +178,29 @@ class MainHtml
 		return $this->platform_color_array[$name];
 	}
 	
+	public function CreateHead()
+	{
+		echo '<!DOCTYPE html><html><head><meta charset="utf-8"/>';
+		echo '<title>XenosV Games</title>';
+		echo '<link rel="preconnect" href="https://fonts.gstatic.com">';
+		echo '<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">';
+		echo '<link rel="stylesheet" type="text/css" href="files/css/site.css">';
+		echo '<style> article, aside, details, figcaption, figure, footer,header, hgroup, menu, nav, section { display: block; } </style>';
+		$css_file = 'files/css/'.$this->sort_platform_info['Platforms'].'.css';
+		if (($this->sort_platform > 1) && (file_exists($css_file)))
+		{
+			echo "<link rel='stylesheet' type='text/css' href='".$css_file."'>";
+		}
+		echo '</head>';
+	}
+	
 	private $platform_color_array;
 	private $sort_name;
 	private $sort_id;
 	private $sort_genre;
 	private $sort_series;
 	private $sort_platform;
+	private $sort_platform_info;
 	private $games_base;
 };
 	
@@ -178,24 +220,10 @@ if(file_exists($cache_file))
 }
 
 ob_start();
-?>
 
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<title>XenosV Games</title>
-		<link rel="preconnect" href="https://fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="files/css/site.css">
-		<style>
-			article, aside, details, figcaption, figure, footer,header,
-			hgroup, menu, nav, section { display: block; }
-		</style>
-	</head>
-	<body>
-	<?php
-		
+$main_html->CreateHead();
+
+	echo "<body>";	
 		echo "<div class='SiteBase'>";
 			echo "<div class='LeftSorter'>";
 				echo "<div>";

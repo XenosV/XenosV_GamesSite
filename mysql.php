@@ -35,6 +35,20 @@ class GamesBase
 		return $request->fetch_array(MYSQLI_ASSOC);
 	}
 	
+	public function getPlatformInfo($id)
+	{
+		$request = $this->mysqli->query(
+		"SELECT 
+			*
+		FROM 
+			platforms
+		WHERE
+			platforms.ID = $id"
+		);
+		
+		return $request->fetch_array(MYSQLI_ASSOC);
+	}
+	
 	public function SelectGameBase($game_genre, $game_platform)
 	{
 		if ($game_genre <= 1 && $game_platform <= 1)
