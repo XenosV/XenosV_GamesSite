@@ -20,7 +20,7 @@ class GamesBase
 		$request = $this->mysqli->query(
 		"SELECT
 			games.*, 
-			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
+			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
 			group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 		FROM
 			games 
@@ -56,7 +56,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 			"SELECT
 				games.*, 
-				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
+				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
 				group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 			FROM
 				games 
@@ -82,7 +82,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*, 
-					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR '/') as plt_cc, 
+					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
 					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc 
 				FROM
 					games 
@@ -110,7 +110,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*, 
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR '/') as plt_cc, 
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc, 
 					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 				FROM
 					games 

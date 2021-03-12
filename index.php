@@ -5,7 +5,8 @@ include_once('mysql.php');
 
 function NameForFile($name)
 {
-	return str_replace(":", "", $name);
+	$name = str_replace("&", "_", $name);
+	return str_replace(array(":", "#", "%", "/", "*", "\""), "", $name);
 }
 
 class MainHtml
@@ -19,14 +20,7 @@ class MainHtml
 				
 				echo "<div>";
 					$video_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/video/';
-					try
-					{
-						$video_files = scandir($video_path);
-					}
-					catch (Exception $e)
-					{
-						echo $e->getMessage();
-					}
+					$video_files = scandir($video_path);
 					
 					if (count($video_files) > 2)
 					{
@@ -34,8 +28,12 @@ class MainHtml
 						{
 							if (($video_files[$i] != ".") && ($video_files[$i] != ".."))
 							{
+								$video_width = mb_substr($video_files[$i], 0, -4);
+								if (!is_numeric($video_width))
+									$video_width = "1080";
+								
 								$video_name = $video_path.$video_files[$i].'#t=0.0';
-								echo "<video style=\"display:block; margin: 0 auto; width: 1080px;\" controls=\"controls\" preload=\"auto\"><source src=\"$video_name\"></video>";
+								echo "<video style=\"display:block; margin: 0 auto; width:".$video_width."px;\" controls=\"controls\" preload=\"auto\"><source src=\"$video_name\"></video>";
 							}
 						}
 					}
@@ -73,31 +71,31 @@ class MainHtml
 						$name = $game_details['Name'];
 						$id = $game_details['ID'];
 						$platforms = $game_details['plt_cc'];
-						$kw_platforms = preg_split("[/]", $platforms);
+						$kw_platforms = preg_split("[;]", $platforms);
 						$genres = $game_details['gen_cc'];
 						$year = $game_details['Year'];
 						
-						$cover_name = "/cover.png";
+						$cover_name = "/cover.jpg";
 						$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
 						if ($this->sort_platform > 1)
 						{
-							if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".png"))
+							if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".jpg"))
 							{
-								$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
+								$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".jpg";
 								if (file_exists($icon_path_digital))
 								{
-								$style = "style=\"height:205px;\"";
+									$style = "style=\"height:205px;\"";
 									echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
 								}
 							}
 							else
 							{
-								$cover_name = "/cover_".$this->sort_platform_info['Platforms'].".png";
+								$cover_name = "/cover_".$this->sort_platform_info['Platforms'].".jpg";
 							}
 						}
 
 						$icon_path = GAME_PATH.NameForFile($name)."_".$id.$cover_name;
-						echo "<a href = 'index.php?id=$id' $style class='GameViewImage'><img class='GameViewImage' $style src=\"$icon_path\"></img></a>";
+						echo "<a href = 'index.php?id=$id' $style class='GameViewImage'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
 						
 						echo "<a href = 'index.php?id=$id' class='GameViewName'>$name</a>";
 						echo "<div class='GameViewPlatformsContainer'>";
