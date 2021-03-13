@@ -1,7 +1,7 @@
 <?php
 
 define("GAME_PATH", "files/games/");
-define(FIRST_LOAD, 30);
+define("FIRST_LOAD", 30);
 include_once('mysql.php');
 
 function NameForFile($name)
