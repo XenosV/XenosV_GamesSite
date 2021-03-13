@@ -81,12 +81,9 @@ class MainHtml
 						{
 							if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".jpg"))
 							{
-								$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".jpg";
-								if (file_exists($icon_path_digital))
-								{
-									$style = "style=\"height:205px;\"";
-									echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
-								}
+								$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
+								$style = "style=\"height:205px;\"";
+								echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
 							}
 							else
 							{
