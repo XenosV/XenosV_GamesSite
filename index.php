@@ -1,6 +1,7 @@
 <?php
 
 define("GAME_PATH", "files/games/");
+define(FIRST_LOAD, 30);
 include_once('mysql.php');
 
 function NameForFile($name)
@@ -68,7 +69,8 @@ class MainHtml
 			else
 			{
 				$this->games_base->SelectGameBase($this->getSortGenre(), $this->getSortPlatform());
-					
+				
+				$index = 0;
 				while($game_details = $this->games_base->getNextGameDetail())
 				{
 					$name = $game_details['Name'];
@@ -80,39 +82,81 @@ class MainHtml
 					$complete = $game_details['Completed'];
 					$rating = $game_details['Rating'];
 					
-					$style = 0;
-					if ($this->sort_platform > 1)
+					if ($index >= FIRST_LOAD)
 					{
-						if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->getSortPlatformName().".jpg"))
+						$style = 0;
+						if ($this->sort_platform > 1)
 						{
-							$style = 1;
-						}
-						else
-						{
-							$style = 2;
-						}
-					}
-					// id - game id
-					// st - game cover style: 0 - cover.jpg (no margin); 1 - cover_platform_digital + cover.jpg (margin-top and margin-bottom it platform.css); 2 - cover_platform.jpg (no margin)
-					// pl - array of game platforms: p - platform name, c - color name
-					// gn - game ganres
-					// cm - game complete
-					// rt - game rating
-					// yr - game year
-					echo "<div class='GV' data-src='";
-						echo "{\"id\":$id,\"st\":$style,\"pl\":[";
-							for ($i = 0; $i < count($kw_platforms) - 1; $i++)
+							if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->getSortPlatformName().".jpg"))
 							{
-								$color = $this->getPlatformColor($kw_platforms[$i]);
-								$pl = $kw_platforms[$i];
-								echo "{\"p\":\"$pl\",\"c\":\"$color\"},";
+								$style = 1;
 							}
-							$color = $this->getPlatformColor($kw_platforms[count($kw_platforms) - 1]);
-							$pl = $kw_platforms[count($kw_platforms) - 1];
-							echo "{\"p\":\"$pl\",\"c\":\"#$color\"}";
-							$gn = EscapingCharacters($genres);
-						echo "],\"gn\":\"$gn\",\"cm\":$complete,\"rt\":$rating,\"yr\":$year}'>";
-					echo "$name</div>";
+							else
+							{
+								$style = 2;
+							}
+						}
+						// id - game id
+						// st - game cover style: 0 - cover.jpg (no margin); 1 - cover_platform_digital + cover.jpg (margin-top and margin-bottom it platform.css); 2 - cover_platform.jpg (no margin)
+						// pl - array of game platforms: p - platform name, c - color name
+						// gn - game ganres
+						// cm - game complete
+						// rt - game rating
+						// yr - game year
+						echo "<div class='GV' data-src='";
+							echo "{\"id\":$id,\"st\":$style,\"pl\":[";
+								for ($i = 0; $i < count($kw_platforms) - 1; $i++)
+								{
+									$color = $this->getPlatformColor($kw_platforms[$i]);
+									$pl = $kw_platforms[$i];
+									echo "{\"p\":\"$pl\",\"c\":\"$color\"},";
+								}
+								$color = $this->getPlatformColor($kw_platforms[count($kw_platforms) - 1]);
+								$pl = $kw_platforms[count($kw_platforms) - 1];
+								echo "{\"p\":\"$pl\",\"c\":\"#$color\"}";
+								$gn = EscapingCharacters($genres);
+							echo "],\"gn\":\"$gn\",\"cm\":$complete,\"rt\":$rating,\"yr\":$year}'>";
+						echo "$name</div>";
+					}
+					else
+					{
+						echo "<div class='GV' data-src=0>";
+							$cover_name = "/cover.jpg";
+							$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
+							if ($this->sort_platform > 1)
+							{
+								if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".jpg"))
+								{
+									$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
+									$style = "style=\"height:205px;\"";
+									echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
+								}
+								else
+								{
+									$cover_name = "/cover_".$this->sort_platform_info['Platforms'].".jpg";
+								}
+							}
+
+							$icon_path = GAME_PATH.NameForFile($name)."_".$id.$cover_name;
+							echo "<a href = 'index.php?id=$id' $style class='GameViewImage'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
+							
+							echo "<a href = 'index.php?id=$id' class='GameViewName'>$name</a>";
+							echo "<div class='GameViewPlatformsContainer'>";
+							foreach ($kw_platforms as $key => $value)
+							{
+								$color = $this->getPlatformColor($value);
+								echo "<p class='GameViewPlatforms' style='background: #$color'>$value</p>";
+							}
+							echo "</div>";
+							echo "<p class='GameViewGenres'>$genres</p>";
+							$rating = 'files\img\rating\rating'.$game_details['Rating'].'.png';
+							$complete = 'files\img\completed\completed'.$game_details['Completed'].'.png';
+							echo "<div class=GameViewSortContainer>";
+								echo "<img src=\"$complete\" width=20px height=20px/><img src=\"$rating\" width=100px height=20px style='margin: 0 0 0 30px'/><p class='GameViewYear'>$year</p>";
+							echo "</div>";
+						echo "</div>";
+					}
+					$index++;
 				}
 			}
 		echo "</div>"; // <div class='SiteMain'>
@@ -285,6 +329,6 @@ $main_html->CreateHead();
 
 
 <?php
-$c = ob_get_contents();
-file_put_contents($cache_file, $c);
+//$c = ob_get_contents();
+//file_put_contents($cache_file, $c);
 ?>
