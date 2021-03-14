@@ -1,3 +1,5 @@
+var visible = 0;
+
 function NameForFile(name)
 {
 	name = name.replace(/&/gi, "_");
@@ -7,6 +9,11 @@ function NameForFile(name)
 function UnescapingCharacters(name)
 {
 	return name.replace(/%39/gi, "'");
+}
+
+function InitVar(vis)
+{
+	visible = vis;
 }
 
 function GenerateGameView(platform)
@@ -22,6 +29,9 @@ function GenerateGameView(platform)
 			games[i].textContent = "";
 			var data = JSON.parse(data_scr);
 			games[i].removeAttribute('data-src');
+			
+			if ((data.cm <= 1) && (visible == 0))
+				games[i].style.display = "none";
 			
 			// Cover
 			var elm = document.createElement("a");

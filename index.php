@@ -19,6 +19,7 @@ class MainHtml
 {
 	public function CreateMainGalery()
 	{
+		$vis = $this->getVisible();
 		echo "<div class='SiteMain'>";
 			if ($this->sort_id != 0)
 			{
@@ -34,7 +35,7 @@ class MainHtml
 						{
 							if (($video_files[$i] != ".") && ($video_files[$i] != ".."))
 							{
-								$video_width = mb_substr($video_files[$i], 0, -4);
+								$video_width = mb_substr($video_files[$i], 3, -4);
 								if (!is_numeric($video_width))
 									$video_width = "1080";
 								
@@ -120,7 +121,13 @@ class MainHtml
 					}
 					else
 					{
-						echo "<div class='GV' data-src=0>";
+						if (($complete > 1) || ($this->visible))
+						{
+							echo "<div class='GV' data-src=0 style=''>";
+							$index++;
+						}
+						else
+							echo "<div class='GV' data-src=0 style='display:none;'>";
 							$cover_name = "/cover.jpg";
 							$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
 							if ($this->sort_platform > 1)
@@ -129,7 +136,7 @@ class MainHtml
 								{
 									$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
 									$style = "style=\"height:205px;\"";
-									echo "<a href='index.php?id=$id' class='GameViewImageDigital'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
+									echo "<a href='index.php?$vis&id=$id'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
 								}
 								else
 								{
@@ -138,9 +145,9 @@ class MainHtml
 							}
 
 							$icon_path = GAME_PATH.NameForFile($name)."_".$id.$cover_name;
-							echo "<a href = 'index.php?id=$id' $style class='GameViewImage'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
+							echo "<a href = 'index.php?$vis&id=$id'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
 							
-							echo "<a href = 'index.php?id=$id' class='GameViewName'>$name</a>";
+							echo "<a href = 'index.php?$vis&id=$id' class='GameViewName'>$name</a>";
 							echo "<div class='GameViewPlatformsContainer'>";
 							foreach ($kw_platforms as $key => $value)
 							{
@@ -156,7 +163,6 @@ class MainHtml
 							echo "</div>";
 						echo "</div>";
 					}
-					$index++;
 				}
 			}
 		echo "</div>"; // <div class='SiteMain'>
@@ -182,7 +188,12 @@ class MainHtml
 			$this->sort_platform_info = $this->games_base->getPlatformInfo($this->sort_platform);
 		}
 		else
-			$this->sort_platform = 0;	
+			$this->sort_platform = 0;
+		
+		if (isset($_GET['visible']))
+			$this->visible = $_GET['visible'];
+		else
+			$this->visible = 0;
 	}
 	
 	public function getSortId(){ return $this->sort_id; }
@@ -225,6 +236,11 @@ class MainHtml
 		return $this->platform_color_array[$name];
 	}
 	
+	public function getVisible()
+	{
+		return $this->visible;
+	}
+	
 	public function CreateHead()
 	{
 		echo '<!DOCTYPE html><html><head><meta charset="utf-8"/>';
@@ -239,6 +255,7 @@ class MainHtml
 			echo "<link rel='stylesheet' type='text/css' href='".$css_file."'>";
 		}
 		echo "<script src='files/js/site.js'></script>";
+		echo"<script type=\"text/javascript\">InitVar($this->visible);</script>";
 		echo '</head>';
 	}
 	
@@ -250,6 +267,7 @@ class MainHtml
 	private $sort_platform;
 	private $sort_platform_info;
 	private $games_base;
+	private $visible;
 };
 	
 $main_html = new MainHtml();
@@ -271,6 +289,7 @@ ob_start();
 
 $main_html->CreateHead();
 
+	$vis = $main_html->getVisible();
 	$pl_name = $main_html->getSortPlatformName();
 	echo "<body onload='GenerateGameView(\"$pl_name\")'>";	
 		echo "<div class='SiteBase'>";
@@ -287,7 +306,7 @@ $main_html->CreateHead();
 						$platform_id = $platform_detail['ID'];;
 						
 						$main_html->AddPlatformColor($platform_name_short, $platform_color);
-						echo "<a href='index.php?platform=$platform_id' class='ButtonSort'>$platform_name_short</a>";
+						echo "<a href='index.php?visible=$vis&platform=$platform_id' class='ButtonSort'>$platform_name_short</a>";
 					}
 				echo "</div>";
 				echo "<div>";
@@ -301,7 +320,7 @@ $main_html->CreateHead();
 						$genre_color = $genre_details['Color'];
 						$genre_id = $genre_details['ID'];;
 						
-						echo "<a href='index.php?genre=$genre_id' class='ButtonSort'>$genre_name_short</a>";
+						echo "<a href='index.php?$vis&genre=$genre_id' class='ButtonSort'>$genre_name_short</a>";
 					}
 				echo "</div>";
 			echo "</div>"; // <div class='LeftSorter'>
