@@ -23,10 +23,8 @@ class MainHtml
 		echo "<div class='SiteMain'>";
 			if ($this->sort_id != 0)
 			{
-				$game_info = $this->games_base->getGameInfo($this->sort_id);
-				
 				echo "<div>";
-					$video_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/video/';
+					$video_path = GAME_PATH.NameForFile($this->game_info['Name'])."_".$this->game_info['ID'].'/video/';
 					$video_files = scandir($video_path);
 					
 					if (count($video_files) > 2)
@@ -47,7 +45,7 @@ class MainHtml
 				echo "</div>";
 				
 				echo "<div class='GamePicture'>";					
-					$pic_path = GAME_PATH.NameForFile($game_info['Name'])."_".$game_info['ID'].'/pic/';
+					$pic_path = GAME_PATH.NameForFile($this->game_info['Name'])."_".$this->game_info['ID'].'/pic/';
 					$pic_files = scandir($pic_path);
 					
 					if (count($pic_files) > 3)
@@ -197,6 +195,9 @@ class MainHtml
 			$this->visible = $_GET['visible'];
 		else
 			$this->visible = 0;
+		
+		if ($this->sort_id != 0)
+			$this->game_info = $this->games_base->getGameInfo($this->sort_id);
 	}
 	
 	public function getSortId(){ return $this->sort_id; }
@@ -247,7 +248,16 @@ class MainHtml
 	public function CreateHead()
 	{
 		echo '<!DOCTYPE html><html><head><meta charset="utf-8"/>';
-		echo '<title>XenosV Games</title>';
+		
+		if ($this->sort_id != 0)
+			$title_name = $this->game_info['Name'];
+		else if ($this->sort_platform > 1)
+			$title_name = $this->sort_platform_info['Name'];
+		else
+			$title_name = "XenosV Games";
+			
+		echo "<title>$title_name</title>";
+		
 		echo '<link rel="preconnect" href="https://fonts.gstatic.com">';
 		echo '<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">';
 		echo '<link rel="stylesheet" type="text/css" href="files/css/site.css">';
@@ -271,6 +281,7 @@ class MainHtml
 	private $sort_platform_info;
 	private $games_base;
 	private $visible;
+	private $game_info;
 };
 	
 $main_html = new MainHtml();
