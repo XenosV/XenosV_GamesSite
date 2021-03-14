@@ -170,19 +170,22 @@ class MainHtml
 	
 	public function MainHtml()
 	{
+		ini_set('session.cookie_samesite', 'None');
+		session_start();
+		
 		$this->games_base = new GamesBase('localhost', 'XenosV', '5uy$_H3X%a?ykwE', 'mygames');
 		
-		if (isset($_GET['id']))
+		if (isset($_GET['id']) && is_numeric($_GET['id']))
 			$this->sort_id = $_GET['id'];
 		else
 			$this->sort_id = 0;
 		
-		if (isset($_GET['genre']))
+		if (isset($_GET['genre']) && is_numeric($_GET['genre']))
 			$this->sort_genre = $_GET['genre'];
 		else
 			$this->sort_genre = 0;
 		
-		if (isset($_GET['platform']))
+		if (isset($_GET['platform']) && is_numeric($_GET['platform']))
 		{
 			$this->sort_platform = $_GET['platform'];
 			$this->sort_platform_info = $this->games_base->getPlatformInfo($this->sort_platform);
@@ -190,7 +193,7 @@ class MainHtml
 		else
 			$this->sort_platform = 0;
 		
-		if (isset($_GET['visible']))
+		if (isset($_GET['visible']) && is_numeric($_GET['visible']))
 			$this->visible = $_GET['visible'];
 		else
 			$this->visible = 0;

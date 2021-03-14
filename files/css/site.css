@@ -52,6 +52,7 @@ A:hover
 	width: 205px;
 	height: 205px;
 	margin-top: 0px;
+	box-shadow: 0 1px 2px #031e2a;
 }
 
 .GameViewImageDigital
@@ -59,6 +60,7 @@ A:hover
 	position: absolute;
 	width: 205px;
 	height: 205px;
+	box-shadow: 0 1px 2px #031e2a;
 }
 
 .GameViewName
