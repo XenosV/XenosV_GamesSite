@@ -134,7 +134,7 @@ class MainHtml
 								{
 									$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
 									$style = "style=\"height:205px;\"";
-									echo "<a href='index.php?$vis&id=$id'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
+									echo "<a href='index.php?visible=$vis&id=$id'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
 								}
 								else
 								{
@@ -143,9 +143,9 @@ class MainHtml
 							}
 
 							$icon_path = GAME_PATH.NameForFile($name)."_".$id.$cover_name;
-							echo "<a href = 'index.php?$vis&id=$id'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
+							echo "<a href = 'index.php?visible=$vis&id=$id'><img class='GameViewImage' $style src=\"$icon_path\" loading=\"lazy\"></img></a>";
 							
-							echo "<a href = 'index.php?$vis&id=$id' class='GameViewName'>$name</a>";
+							echo "<a href = 'index.php?visible=$vis&id=$id' class='GameViewName'>$name</a>";
 							echo "<div class='GameViewPlatformsContainer'>";
 							foreach ($kw_platforms as $key => $value)
 							{
