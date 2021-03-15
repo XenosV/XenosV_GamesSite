@@ -24,6 +24,15 @@ class MainHtml
 			// Filters and Sorters
 			echo "<div class='SortersContaner'>";
 				echo "<div><p>Платформы <i class='down'></i></p></div>";
+				while ($platform_detail = $this->getNextPlatform())
+				{
+					$platform_name_short = $platform_detail['Platforms'];
+					$platform_name = $platform_detail['Name'];
+					$platform_color = $platform_detail['Color'];
+					$platform_id = $platform_detail['ID'];
+					
+					$this->AddPlatformColor($platform_name_short, $platform_color);
+				}
 				echo "<div><p>Жанры <i class='down'></i></p></div>";
 				echo "<div><p>Годы <i class='down'></i></p></div>";
 				echo "<div><p>Рейтинги <i class='down'></i></p></div>";
@@ -121,7 +130,7 @@ class MainHtml
 									{
 										$color = $this->getPlatformColor($kw_platforms[$i]);
 										$pl = $kw_platforms[$i];
-										echo "{\"p\":\"$pl\",\"c\":\"$color\"},";
+										echo "{\"p\":\"$pl\",\"c\":\"#$color\"},";
 									}
 									$color = $this->getPlatformColor($kw_platforms[count($kw_platforms) - 1]);
 									$pl = $kw_platforms[count($kw_platforms) - 1];
