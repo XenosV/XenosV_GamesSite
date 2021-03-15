@@ -25,15 +25,20 @@ A:hover
 	text-decoration: none;
 }
 
-.SiteMain 
+.SiteView
 {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
 	background: #e0e0e0;
-	width: 1140px;
+	width: 100%px;
 	padding: 10px 0px 0px 0px;
 	margin: 0 auto;
+}
+
+.SiteMain
+{
+	width: 1140px;
 }
 
 .GV
@@ -97,7 +102,7 @@ A:hover
 	display: flex;
 	flex-direction: row;
 	flex-wrap: nowrap;
-	justify-content: space-between;
+	justify-content: space-around;
 }
 
 .TextSort
@@ -190,4 +195,43 @@ A:hover
 	margin: 0;
 	height: 14px;
 	font-size: 12px;
+}
+
+i
+{
+	border: solid black;
+	border-width: 0 3px 3px 0;
+	display: inline-block;
+	padding: 3px;
+}
+
+.up
+{
+	transform: rotate(-135deg);
+	-webkit-transform: rotate(-135deg);
+}
+
+.down 
+{
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.SortersContaner
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	align-items: center;
+	background: #e0e0e0;
+}
+
+.SortersContaner div
+{
+	margin: 5px 10px;
+	background: #A0A0A0;
+	width: 205px;
+	text-align: center;
+	border-color: #404040;
+	border: 1px solid;
 }

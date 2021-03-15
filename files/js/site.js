@@ -3,7 +3,7 @@ var visible = 0;
 function NameForFile(name)
 {
 	name = name.replace(/&/gi, "_");
-	return name.replace(/[:#*%/\\]/gi, "");
+	return name.replace(/[":#*%/\\]/gi, "");
 }
 
 function UnescapingCharacters(name)
