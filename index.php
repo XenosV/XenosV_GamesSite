@@ -23,7 +23,13 @@ class MainHtml
 		echo "<div class='SiteMain'>";
 			// Filters and Sorters
 			echo "<div class='SortersContaner'>";
-				echo "<div><p>Платформы <i class='down'></i></p></div>";
+				echo "<div class=\"Btn\" onclick=\"ShowSortPlatform()\">Платформы <i class='down'></i></div>";
+				echo "<div class=\"Btn\">Жанры <i class='down'></i></div>";
+				echo "<div class=\"Btn\">Годы <i class='down'></i></div>";
+				echo "<div class=\"Btn\">Рейтинги <i class='down'></i></div>";
+				echo "<div class=\"Btn\">Прохождение <i class='down'></i></div>";
+			echo "</div>";
+			echo "<div class='ButtonContaner' id=\"btnShow\">";
 				while ($platform_detail = $this->getNextPlatform())
 				{
 					$platform_name_short = $platform_detail['Platforms'];
@@ -32,13 +38,8 @@ class MainHtml
 					$platform_id = $platform_detail['ID'];
 					
 					$this->AddPlatformColor($platform_name_short, $platform_color);
+					echo "<a href='index.php?visible=$vis&platform=$platform_id' class='ButtonSort'>$platform_name_short</a>";
 				}
-				echo "<div><p>Жанры <i class='down'></i></p></div>";
-				echo "<div><p>Годы <i class='down'></i></p></div>";
-				echo "<div><p>Рейтинги <i class='down'></i></p></div>";
-				echo "<div><p>Прохождение <i class='down'></i></p></div>";
-			echo "</div>";
-			echo "<div class='SortButtonsView'>";
 			echo "</div>";
 				
 			if ($this->sort_id != 0)
@@ -337,6 +338,25 @@ $main_html->CreateHead();
 	?>
 	</body>
 </html>
+
+<script>
+function ShowSortPlatform()
+{
+	document.getElementById('btnShow').classList.toggle('show');
+}
+
+window.onclick = function(e)
+{
+	if (!e.target.matches('.Btn') && !e.target.matches('.down'))
+	{
+		var btn_show = document.getElementById('btnShow');
+		if (btn_show.classList.contains('show'))
+		{
+			btn_show.classList.remove('show');
+		}
+	}
+}
+</script>
 
 
 <?php
