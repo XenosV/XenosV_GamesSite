@@ -38,7 +38,7 @@ class MainHtml
 					$platform_id = $platform_detail['ID'];
 					
 					$this->AddPlatformColor($platform_name_short, $platform_color);
-					echo "<a href='index.php?visible=$vis&platform=$platform_id' class='ButtonSort'>$platform_name_short</a>";
+					echo "<a href='index.php?visible=$vis&platform=$platform_id' class='ButtonSort' style=\"background:#$platform_color;\">$platform_name_short</a>";
 				}
 			echo "</div>";
 				

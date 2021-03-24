@@ -35,7 +35,7 @@ function GenerateGameView(platform)
 			
 			// Cover
 			var elm = document.createElement("a");
-			elm.setAttribute("href", "http://localhost/index.php?visible=" + visible + "&id=" + data.id);
+			elm.setAttribute("href", "index.php?visible=" + visible + "&id=" + data.id);
 			var img = document.createElement("img");
 			img.setAttribute("loading", "lazy");
 			img.setAttribute("class", "GameViewImage");
@@ -65,7 +65,7 @@ function GenerateGameView(platform)
 			
 			// Name
 			elm = document.createElement("a");
-			elm.setAttribute("href", "http://localhost/index.php?visible=" + visible + "&id=" + data.id);
+			elm.setAttribute("href", "index.php?visible=" + visible + "&id=" + data.id);
 			elm.setAttribute("class", "GameViewName");
 			elm.textContent = game_name;
 			games[i].appendChild(elm);
