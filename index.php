@@ -42,7 +42,7 @@ class MainHtml
 				}
 			echo "</div>";
 				
-			if ($this->sort_id != 0)
+			if ($this->sort_id != 0) // Game selected
 			{
 				echo "<div>";
 					$video_path = GAME_PATH.NameForFile($this->game_info['Name'])."_".$this->game_info['ID'].'/video/';
@@ -88,6 +88,19 @@ class MainHtml
 			}
 			else //////////////////////////// No Game selected //////////////////////////////////
 			{
+				if ($this->getSortPlatform() != 1)
+				{
+					echo "<div class='SiteView'>";
+						$platform_name = $this->getSortPlatformNameFull();
+						echo "<div>";
+							echo "<a href=''><img src=\"files/img/platforms_jpg/".$platform_name.".jpg\" height='250px'></img></a>";
+						echo "</div>";
+						echo "<div>";
+							echo "$platform_name";
+						echo "</div>";
+					echo "</div>";
+				}
+				
 				$this->games_base->SelectGameBase($this->getSortGenre(), $this->getSortPlatform());
 				
 				// Games
@@ -236,7 +249,6 @@ class MainHtml
 	public function getSortPlatformSelf(){ return $this->sort_platform; }
 	public function getSortPlatformFile(){ return $this->sort_platform; }
 	
-	// tmp //
 	public function getNextPlatform()
 	{
 		return $this->games_base->getNextPlatform();
@@ -253,7 +265,10 @@ class MainHtml
 	{
 		return $this->sort_platform_info['Platforms'];
 	}
-	/////////
+	public function getSortPlatformNameFull()
+	{
+		return $this->sort_platform_info['Name'];
+	}
 	
 	public function AddPlatformColor($name, $color)
 	{
