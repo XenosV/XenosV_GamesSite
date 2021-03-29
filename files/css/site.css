@@ -36,6 +36,27 @@ A:hover
 	margin: 0 auto;
 }
 
+.PlatformView
+{
+	display: flex;
+	flex-wrap: wrap;
+	background: #e0e0e0;
+	width: 100%px;
+	padding: 10px 10px 0px 10px;
+}
+
+.PlatformAbout
+{
+	padding-top: 20px;
+}
+
+.PlatformAbout p
+{
+	font-weight: 700;
+	font-size: 16px;
+	margin: 5px 0px 0px 10px;
+}
+
 .SiteMain
 {
 	width: 1140px;

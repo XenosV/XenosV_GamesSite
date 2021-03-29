@@ -17,7 +17,7 @@ function EscapingCharacters($name)
 
 class MainHtml
 {
-	public function CreateMainGalery()
+	private function CreateMainGalery()
 	{
 		$vis = $this->getVisible();
 		echo "<div class='SiteMain'>";
@@ -90,13 +90,20 @@ class MainHtml
 			{
 				if ($this->getSortPlatform() != 1)
 				{
-					echo "<div class='SiteView'>";
+					echo "<div class='PlatformView'>";
 						$platform_name = $this->getSortPlatformNameFull();
+						
 						echo "<div>";
 							echo "<a href=''><img src=\"files/img/platforms_jpg/".$platform_name.".jpg\" height='250px'></img></a>";
 						echo "</div>";
-						echo "<div>";
-							echo "$platform_name";
+						echo "<div class=PlatformAbout>";
+							echo "<p>Платформа: $platform_name</p>";
+							$str = $this->getSortPlatformDeveloper();
+							echo "<p>Разработчик: $str </p>";
+							$str = $this->getSortPlatformYears();
+							echo "<p>Годы: $str </p>";
+							$str = $this->getSortPlatformGeneration();
+							echo "<p>Поколение: $str </p>";
 						echo "</div>";
 					echo "</div>";
 				}
@@ -249,44 +256,54 @@ class MainHtml
 	public function getSortPlatformSelf(){ return $this->sort_platform; }
 	public function getSortPlatformFile(){ return $this->sort_platform; }
 	
-	public function getNextPlatform()
+	private function getNextPlatform()
 	{
 		return $this->games_base->getNextPlatform();
 	}
-	public function getNextGenre()
+	private function getNextGenre()
 	{
 		return $this->games_base->getNextGenre();
 	}
-	public function getNextYear()
+	private function getNextYear()
 	{
 		return $this->games_base->getNextYear();
 	}
-	public function getSortPlatformName()
+	private function getSortPlatformName()
 	{
 		return $this->sort_platform_info['Platforms'];
 	}
-	public function getSortPlatformNameFull()
+	private function getSortPlatformNameFull()
 	{
 		return $this->sort_platform_info['Name'];
 	}
-	
-	public function AddPlatformColor($name, $color)
+	private function getSortPlatformDeveloper()
+	{
+		return $this->sort_platform_info['Developer'];
+	}
+	private function getSortPlatformYears()
+	{
+		return $this->sort_platform_info['Year'];
+	}
+	private function getSortPlatformGeneration()
+	{
+		return $this->sort_platform_info['Generation'];
+	}
+	private function AddPlatformColor($name, $color)
 	{
 		$this->platform_color_array[$name] = $color;
 	}
-	public function getPlatformColor($name)
+	private function getPlatformColor($name)
 	{
 		return $this->platform_color_array[$name];
 	}
-	
-	public function getVisible()
+	private function getVisible()
 	{
 		return $this->visible;
 	}
 	
 	public function CreateHead()
 	{
-		echo '<!DOCTYPE html><html><head><meta charset="utf-8"/>';
+		echo '<head><meta charset="utf-8"/>';
 		
 		if ($this->sort_id != 0)
 			$title_name = $this->game_info['Name'];
@@ -309,6 +326,17 @@ class MainHtml
 		echo "<script src='files/js/site.js'></script>";
 		echo"<script type=\"text/javascript\">InitVar($this->visible);</script>";
 		echo '</head>';
+	}
+	
+	public function CreateBody()
+	{
+		$vis = $this->getVisible();
+		$pl_name = $this->getSortPlatformName();
+		echo "<body onload='GenerateGameView(\"$pl_name\")'>";	
+			echo "<div class='SiteBase'>";
+				$this->CreateMainGalery();
+			echo"</div>";
+		echo "</body>";
 	}
 	
 	private $platform_color_array;
@@ -340,20 +368,11 @@ if(file_exists($cache_file))
 
 ob_start();
 
-$main_html->CreateHead();
-
-	$vis = $main_html->getVisible();
-	$pl_name = $main_html->getSortPlatformName();
-	echo "<body onload='GenerateGameView(\"$pl_name\")'>";	
-		echo "<div class='SiteBase'>";
-			
-			$main_html->CreateMainGalery();
-			
-		echo"</div>";
-	?>
-	</body>
-</html>
-
+echo "<!DOCTYPE html><html>";
+	$main_html->CreateHead();
+	$main_html->CreateBody();
+echo "</html>";
+?>
 <script>
 function ShowSortPlatform()
 {
