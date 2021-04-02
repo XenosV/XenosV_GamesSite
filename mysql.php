@@ -10,6 +10,8 @@ class GamesBase
 			die('mysql ошибка соединения с базой данных');
 		}
 		
+		$this->mysqli->set_charset("utf8");
+		
 		$this->SelectAllPlatforms();
 		$this->SelectAllGenres();
 		$this->SelectAllYears();

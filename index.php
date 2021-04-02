@@ -1,7 +1,7 @@
 <?php
 
 define("GAME_PATH", "files/games/");
-define("FIRST_LOAD", 30);
+define("FIRST_LOAD", 20);
 include_once('mysql.php');
 
 function NameForFile($name)
@@ -44,8 +44,12 @@ class MainHtml
 				
 			if ($this->sort_id != 0) // Game selected
 			{
+				$selected_game_name = $this->getSelectedGameName();
 				echo "<div>";
-					$video_path = GAME_PATH.NameForFile($this->game_info['Name'])."_".$this->game_info['ID'].'/video/';
+					echo "<p>$selected_game_name</p>";
+				echo "</div>";
+				echo "<div>";
+					$video_path = GAME_PATH.NameForFile($selected_game_name)."_".$this->game_info['ID'].'/video/';
 					$video_files = scandir($video_path);
 					
 					if (count($video_files) > 2)
@@ -56,17 +60,19 @@ class MainHtml
 							{
 								$video_width = mb_substr($video_files[$i], 3, -4);
 								if (!is_numeric($video_width))
-									$video_width = "1080";
+									$video_width = "960";
 								
 								$video_name = $video_path.$video_files[$i].'#t=0.0';
-								echo "<video style=\"display:block; margin: 0 auto; width:".$video_width."px;\" controls=\"controls\" preload=\"auto\"><source src=\"$video_name\"></video>";
+								echo "<div style=\"display:block; margin: 0 auto; max-width:".$video_width."px;\">";
+								echo "<video style=\"display:block; margin: 0 auto; width:100%;\" controls=\"controls\" preload=\"auto\"><source src=\"$video_name\"></video>";
+								echo "</div>";
 							}
 						}
 					}
 				echo "</div>";
 				
 				echo "<div class='GamePicture'>";					
-					$pic_path = GAME_PATH.NameForFile($this->game_info['Name'])."_".$this->game_info['ID'].'/pic/';
+					$pic_path = GAME_PATH.NameForFile($selected_game_name)."_".$this->game_info['ID'].'/pic/';
 					$pic_files = scandir($pic_path);
 					
 					if (count($pic_files) > 3)
@@ -88,7 +94,7 @@ class MainHtml
 			}
 			else //////////////////////////// No Game selected //////////////////////////////////
 			{
-				if ($this->getSortPlatform() != 1)
+				if ($this->getSortPlatform() > 1)
 				{
 					echo "<div class='PlatformView'>";
 						$platform_name = $this->getSortPlatformNameFull();
@@ -129,7 +135,7 @@ class MainHtml
 							$style = 0;
 							if ($this->sort_platform > 1)
 							{
-								if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->getSortPlatformName().".jpg"))
+								if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName()).".jpg"))
 								{
 									$style = 1;
 								}
@@ -173,15 +179,15 @@ class MainHtml
 								$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
 								if ($this->sort_platform > 1)
 								{
-									if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".$this->sort_platform_info['Platforms'].".jpg"))
+									if (!file_exists(GAME_PATH.NameForFile($name)."_".$id."/cover_".iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName()).".jpg"))
 									{
-										$icon_path_digital = "files/img/cover_digital/cover_".$this->sort_platform_info['Platforms'].".png";
+										$icon_path_digital = "files/img/cover_digital/cover_".iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName()).".png";
 										$style = "style=\"height:205px;\"";
 										echo "<a href='index.php?visible=$vis&id=$id'><img class='GameViewImageDigital' src=\"$icon_path_digital\"></img></a>";
 									}
 									else
 									{
-										$cover_name = "/cover_".$this->sort_platform_info['Platforms'].".jpg";
+										$cover_name = "/cover_".iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName()).".jpg";
 									}
 								}
 
@@ -300,13 +306,17 @@ class MainHtml
 	{
 		return $this->visible;
 	}
+	private function getSelectedGameName()
+	{
+		return $this->game_info['Name'];
+	}
 	
 	public function CreateHead()
 	{
 		echo '<head><meta charset="utf-8"/>';
 		
 		if ($this->sort_id != 0)
-			$title_name = $this->game_info['Name'];
+			$title_name = $this->getSelectedGameName();
 		else if ($this->sort_platform > 1)
 			$title_name = $this->sort_platform_info['Name'];
 		else
@@ -319,6 +329,7 @@ class MainHtml
 		echo '<link rel="stylesheet" type="text/css" href="files/css/site.css">';
 		echo '<style> article, aside, details, figcaption, figure, footer,header, hgroup, menu, nav, section { display: block; } </style>';
 		$css_file = 'files/css/'.$this->sort_platform_info['Platforms'].'.css';
+		$css_file = iconv("UTF-8", "ASCII//TRANSLIT", $css_file);
 		if (($this->sort_platform > 1) && (file_exists($css_file)))
 		{
 			echo "<link rel='stylesheet' type='text/css' href='".$css_file."'>";
@@ -331,7 +342,7 @@ class MainHtml
 	public function CreateBody()
 	{
 		$vis = $this->getVisible();
-		$pl_name = $this->getSortPlatformName();
+		$pl_name = iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName());
 		echo "<body onload='GenerateGameView(\"$pl_name\")'>";	
 			echo "<div class='SiteBase'>";
 				$this->CreateMainGalery();
