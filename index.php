@@ -20,28 +20,47 @@ class MainHtml
 	private function CreateMainGalery()
 	{
 		$vis = $this->getVisible();
+		$genre_select = $this->getSortGenre();
+		$platform_select = $this->getSortPlatform();
 		echo "<div class='SiteMain'>";
 			// Filters and Sorters
 			echo "<div class='SortersContaner'>";
-				echo "<div class=\"Btn\" onclick=\"ShowSortPlatform()\">Платформы <i class='down'></i></div>";
-				echo "<div class=\"Btn\">Жанры <i class='down'></i></div>";
+				echo "<div class=\"Btn\" id=\"BtnPlatforms\">Платформы <i class='down'></i></div>";
+				echo "<div class=\"Btn\" id=\"BtnGenres\">Жанры <i class='down'></i></div>";
 				echo "<div class=\"Btn\">Годы <i class='down'></i></div>";
 				echo "<div class=\"Btn\">Рейтинги <i class='down'></i></div>";
 				echo "<div class=\"Btn\">Прохождение <i class='down'></i></div>";
 			echo "</div>";
-			echo "<div class='ButtonContaner' id=\"btnShow\">";
-				while ($platform_detail = $this->getNextPlatform())
-				{
-					$platform_name_short = $platform_detail['Platforms'];
-					$platform_name = $platform_detail['Name'];
-					$platform_color = $platform_detail['Color'];
-					$platform_id = $platform_detail['ID'];
+
+			$json_sorter = "{\"pl\":[";
+			while ($platform_detail = $this->getNextPlatform())
+			{
+				$platform_name_short = $platform_detail['Platforms'];
+				$platform_name = $platform_detail['Name'];
+				$platform_color = $platform_detail['Color'];
+				$platform_id = $platform_detail['ID'];
 					
-					$this->AddPlatformColor($platform_name_short, $platform_color);
-					echo "<a href='index.php?visible=$vis&platform=$platform_id' class='ButtonSort' style=\"background:#$platform_color;\">$platform_name_short</a>";
-				}
-			echo "</div>";
-				
+				// Add platform's colors to global buffer
+				$this->AddPlatformColor($platform_name_short, $platform_color);
+
+				$json_sorter .= "{\"v\":$vis,\"p\":$platform_id,\"g\":$genre_select,\"name\":\"$platform_name_short\",\"bg\":\"#$platform_color\"},";
+			}
+			$json_sorter = rtrim($json_sorter, ",");
+			$json_sorter .= "],\"gn\":[";
+			while ($genre_detail = $this->getNextGenre())
+			{
+				$genre_name_short = EscapingCharacters($genre_detail['Genres']);
+				$genre_name = EscapingCharacters($genre_detail['Name']);
+				$genre_color = $genre_detail['Color'];
+				$genre_id = $genre_detail['ID'];
+
+				$json_sorter .= "{\"v\":$vis,\"p\":$platform_select,\"g\":$genre_id,\"name\":\"$genre_name_short\",\"bg\":\"#$genre_color\"},";
+			}
+			$json_sorter = rtrim($json_sorter, ",");
+			$json_sorter .= "]}";
+
+			echo "<div class='ButtonContaner' data-src='$json_sorter' id=\"btnShow\"></div>";
+
 			if ($this->sort_id != 0) // Game selected
 			{
 				$selected_game_name = $this->getSelectedGameName();
@@ -151,20 +170,17 @@ class MainHtml
 							// cm - game complete
 							// rt - game rating
 							// yr - game year
-							echo "<div class='GV' data-src='";
-								echo "{\"id\":$id,\"st\":$style,\"pl\":[";
-									for ($i = 0; $i < count($kw_platforms) - 1; $i++)
-									{
-										$color = $this->getPlatformColor($kw_platforms[$i]);
-										$pl = $kw_platforms[$i];
-										echo "{\"p\":\"$pl\",\"c\":\"#$color\"},";
-									}
-									$color = $this->getPlatformColor($kw_platforms[count($kw_platforms) - 1]);
-									$pl = $kw_platforms[count($kw_platforms) - 1];
-									echo "{\"p\":\"$pl\",\"c\":\"#$color\"}";
-									$gn = EscapingCharacters($genres);
-								echo "],\"gn\":\"$gn\",\"cm\":$complete,\"rt\":$rating,\"yr\":$year}'>";
-							echo "$name</div>";
+							$json_game = "{\"id\":$id,\"st\":$style,\"pl\":[";
+								for ($i = 0; $i < count($kw_platforms); $i++)
+								{
+									$color = $this->getPlatformColor($kw_platforms[$i]);
+									$pl = $kw_platforms[$i];
+										$json_game .= "{\"p\":\"$pl\",\"c\":\"#$color\"},";
+								}
+								$json_game = rtrim($json_game, ",");
+								$gn = EscapingCharacters($genres);
+								$json_game .= "],\"gn\":\"$gn\",\"cm\":$complete,\"rt\":$rating,\"yr\":$year}";
+							echo "<div class='GV' data-src='$json_game'>$name</div>";
 						}
 						else
 						{
@@ -385,22 +401,8 @@ echo "<!DOCTYPE html><html>";
 echo "</html>";
 ?>
 <script>
-function ShowSortPlatform()
-{
-	document.getElementById('btnShow').classList.toggle('show');
-}
-
-window.onclick = function(e)
-{
-	if (!e.target.matches('.Btn') && !e.target.matches('.down'))
-	{
-		var btn_show = document.getElementById('btnShow');
-		if (btn_show.classList.contains('show'))
-		{
-			btn_show.classList.remove('show');
-		}
-	}
-}
+document.getElementById ("BtnPlatforms").addEventListener ("click", ShowSortPlatforms, false);
+document.getElementById ("BtnGenres").addEventListener ("click", ShowSortGenres, false);
 </script>
 
 

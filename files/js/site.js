@@ -109,3 +109,67 @@ function GenerateGameView(platform)
 		}
 	}
 }
+
+function ShowSortPlatforms()
+{
+	var btn_show = document.getElementById('btnShow');
+	if (btn_show.classList.contains('show'))
+	{
+		btn_show.classList.remove('show');
+		btn_show.innerHTML = "";
+	}
+	else
+	{
+		btn_show.classList.add('show');
+		GenerateSortButtons('pl');
+	}
+}
+
+function ShowSortGenres()
+{
+	var btn_show = document.getElementById('btnShow');
+	if (btn_show.classList.contains('show'))
+	{
+		btn_show.classList.remove('show');
+		btn_show.innerHTML = "";
+	}
+	else
+	{
+		btn_show.classList.add('show');
+		GenerateSortButtons('gn');
+	}
+}
+
+window.onclick = function(e)
+{
+	if (!e.target.matches('.Btn') && !e.target.matches('.down'))
+	{
+		var btn_show = document.getElementById('btnShow');
+		if (btn_show.classList.contains('show'))
+		{
+			btn_show.classList.remove('show');
+			btn_show.innerHTML = "";
+		}
+	}
+}
+
+function GenerateSortButtons(type)
+{
+	var buttons = document.getElementById('btnShow');
+	var data_scr = buttons.getAttribute('data-src');
+	if (data_scr != 0)
+	{
+		var data = JSON.parse(data_scr);
+		for (var i = 0; i < data[type].length; i++)
+		{
+			var elm = document.createElement("a");
+			elm.setAttribute("href", "index.php?visible=" + data[type][i].v + "&platform=" + data[type][i].p + "&genre=" + data[type][i].g);
+			elm.setAttribute("class", "ButtonSort");
+			elm.textContent = UnescapingCharacters(data[type][i].name);
+			if (data[type][i].bg != null)
+				elm.setAttribute("style", "background:" + data[type][i].bg);
+
+			buttons.appendChild(elm);
+		}
+	}
+}

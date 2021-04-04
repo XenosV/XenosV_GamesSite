@@ -57,19 +57,19 @@ class GamesBase
 		{
 			$this->sql_games_request = $this->mysqli->query(
 			"SELECT
-				games.*, 
-				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
-				group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
+				games.*,
+				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc,
+				group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc
 			FROM
-				games 
-					join games_platforms on games_platforms.Game_ID = games.ID 
-					join platforms on platforms.ID = games_platforms.Platform_ID 
-					join games_genres on games_genres.Game_ID = games.ID 
-					join genres on genres.ID = games_genres.Genre_ID 
+				games
+					join games_platforms on games_platforms.Game_ID = games.ID
+					join platforms on platforms.ID = games_platforms.Platform_ID
+					join games_genres on games_genres.Game_ID = games.ID
+					join genres on genres.ID = games_genres.Genre_ID
 			WHERE
-				games.Visible > 0 
+				games.Visible > 0
 			GROUP BY
-				games.ID 
+				games.ID
 			ORDER BY
 				CASE
 					WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
@@ -79,15 +79,15 @@ class GamesBase
 				games.Name"
 			);
 		}
-		else if ($game_genre != 0)
+		else if (($game_genre > 1) && ($game_platform <= 1))
 		{
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
-					games.*, 
-					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
-					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc 
+					games.*,
+					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc
 				FROM
-					games 
+					games
 						join games_platforms on games_platforms.Game_ID = games.ID
 						join platforms on platforms.ID = games_platforms.Platform_ID
 						join games_genres games_genres_t on games_genres_t.Game_ID = games.ID
@@ -95,9 +95,9 @@ class GamesBase
 						join games_genres games_genres_t2 on games_genres_t2.Game_ID = games.ID
 						join genres genres_t2 on genres_t2.ID = games_genres_t2.Genre_ID AND genres_t2.ID = $game_genre
 				WHERE
-					games.Visible > 0 
+					games.Visible > 0
 				GROUP BY
-					games.ID 
+					games.ID
 				ORDER BY
 					CASE
 						WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
@@ -107,15 +107,15 @@ class GamesBase
 					games.Name"
 			);
 		}
-		else if ($game_platform != 0)
+		else if (($game_platform > 1) && ($game_genre <= 1))
 		{
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
-					games.*, 
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc, 
-					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
+					games.*,
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc
 				FROM
-					games 
+					games
 						join games_platforms games_platforms_t on games_platforms_t.Game_ID = games.ID
 						join platforms platforms_t on platforms_t.ID = games_platforms_t.Platform_ID
 						join games_platforms games_platforms_t2 on games_platforms_t2.Game_ID = games.ID
@@ -123,9 +123,9 @@ class GamesBase
 						join games_genres on games_genres.Game_ID = games.ID
 						join genres	on genres.ID = games_genres.Genre_ID
 				WHERE
-					games.Visible > 0 
+					games.Visible > 0
 				GROUP BY
-					games.ID 
+					games.ID
 				ORDER BY
 					CASE
 						WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
@@ -137,7 +137,33 @@ class GamesBase
 		}
 		else
 		{
-			die('Ошибка запроса к базе данных');
+			$this->sql_games_request = $this->mysqli->query(
+				"SELECT
+					games.*,
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc
+				FROM
+					games
+						join games_platforms games_platforms_t on games_platforms_t.Game_ID = games.ID
+						join platforms platforms_t on platforms_t.ID = games_platforms_t.Platform_ID
+						join games_platforms games_platforms_t2 on games_platforms_t2.Game_ID = games.ID
+						join platforms platforms_t2 on platforms_t2.ID = games_platforms_t2.Platform_ID AND platforms_t2.ID = $game_platform
+						join games_genres games_genres_t on games_genres_t.Game_ID = games.ID
+						join genres genres_t on genres_t.ID = games_genres_t.Genre_ID
+						join games_genres games_genres_t2 on games_genres_t2.Game_ID = games.ID
+						join genres genres_t2 on genres_t2.ID = games_genres_t2.Genre_ID AND genres_t2.ID = $game_genre
+				WHERE
+					games.Visible > 0
+				GROUP BY
+					games.ID
+				ORDER BY
+					CASE
+						WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
+						THEN TRIM(SUBSTR(games.Name, INSTR(games.Name ,' ')))
+						ELSE games.Name
+					END,
+					games.Name"
+			);
 		}
 	}
 	
