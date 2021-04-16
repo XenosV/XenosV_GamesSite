@@ -184,7 +184,7 @@ class GamesBase
 		FROM 
 			`platforms`
 		ORDER BY 
-			Sort"
+			Generation, Sort"
 		);
 	}
 	

@@ -39,11 +39,13 @@ class MainHtml
 				$platform_name = $platform_detail['Name'];
 				$platform_color = $platform_detail['Color'];
 				$platform_id = $platform_detail['ID'];
+				$platform_generation = $platform_detail['Generation'];
 					
 				// Add platform's colors to global buffer
 				$this->AddPlatformColor($platform_name_short, $platform_color);
+				$this->AddPlatformId($platform_name_short, $platform_id);
 
-				$json_sorter .= "{\"v\":$vis,\"p\":$platform_id,\"g\":$genre_select,\"name\":\"$platform_name_short\",\"bg\":\"#$platform_color\"},";
+				$json_sorter .= "{\"v\":$vis,\"p\":$platform_id,\"g\":$genre_select,\"name\":\"$platform_name_short\",\"bg\":\"#$platform_color\",\"gn\":$platform_generation},";
 			}
 			$json_sorter = rtrim($json_sorter, ",");
 			$json_sorter .= "],\"gn\":[";
@@ -119,7 +121,7 @@ class MainHtml
 						$platform_name = $this->getSortPlatformNameFull();
 						
 						echo "<div>";
-							echo "<a href=''><img src=\"files/img/platforms_jpg/".$platform_name.".jpg\" height='250px'></img></a>";
+							echo "<a href=''><img src=\"files/img/platforms_jpg/".NameForFile($platform_name).".jpg\" height='250px'></img></a>";
 						echo "</div>";
 						echo "<div class=PlatformAbout>";
 							echo "<p>Платформа: $platform_name</p>";
@@ -174,8 +176,9 @@ class MainHtml
 								for ($i = 0; $i < count($kw_platforms); $i++)
 								{
 									$color = $this->getPlatformColor($kw_platforms[$i]);
+									$platform_id = $this->getPlatformId($kw_platforms[$i]);
 									$pl = $kw_platforms[$i];
-										$json_game .= "{\"p\":\"$pl\",\"c\":\"#$color\"},";
+										$json_game .= "{\"p\":\"$pl\",\"c\":\"#$color\",\"id\":$platform_id},";
 								}
 								$json_game = rtrim($json_game, ",");
 								$gn = EscapingCharacters($genres);
@@ -215,7 +218,8 @@ class MainHtml
 								foreach ($kw_platforms as $key => $value)
 								{
 									$color = $this->getPlatformColor($value);
-									echo "<p class='GameViewPlatforms' style='background: #$color'>$value</p>";
+									$platform_id = $this->getPlatformId($value);
+									echo "<a href='index.php?visible=$vis&platform=$platform_id' class='GameViewPlatforms' style='background:#$color'><p style='margin:0'>$value</p></a>";
 								}
 								echo "</div>";
 								echo "<p class='GameViewGenres'>$genres</p>";
@@ -318,6 +322,14 @@ class MainHtml
 	{
 		return $this->platform_color_array[$name];
 	}
+	private function AddPlatformId($name, $id)
+	{
+		$this->platform_id_array[$name] = $id;
+	}
+	private function getPlatformId($name)
+	{
+		return $this->platform_id_array[$name];
+	}
 	private function getVisible()
 	{
 		return $this->visible;
@@ -367,6 +379,7 @@ class MainHtml
 	}
 	
 	private $platform_color_array;
+	private $platform_id_array;
 	private $sort_name;
 	private $sort_id;
 	private $sort_genre;

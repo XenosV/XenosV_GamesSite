@@ -31,7 +31,7 @@ A:hover
 	flex-wrap: wrap;
 	justify-content: space-around;
 	background: #e0e0e0;
-	width: 100%px;
+	width: 100%;
 	padding: 10px 0px 0px 0px;
 	margin: 0 auto;
 }
@@ -41,7 +41,6 @@ A:hover
 	display: flex;
 	flex-wrap: wrap;
 	background: #e0e0e0;
-	width: 100%px;
 	padding: 10px 10px 0px 10px;
 }
 
@@ -160,13 +159,13 @@ A:hover
 /* Less then 5
 GameViewPlatforms p:nth-last-child(-n+5):first-child, p:nth-last-child(-n+5):first-child ~ p 
 */
-GameViewPlatforms p:nth-last-child(n+5), p:nth-last-child(n+5) ~ p
+.GameViewPlatforms:nth-last-child(n+5), .GameViewPlatforms:nth-last-child(n+5) ~ .GameViewPlatforms
 {
 	min-width: 23%;
 	max-width: 23.1%;
 }
 
-GameViewPlatforms p:nth-last-child(n+13), p:nth-last-child(n+13) ~ p
+.GameViewPlatforms:nth-last-child(n+13), .GameViewPlatforms:nth-last-child(n+13) ~ .GameViewPlatforms
 {
 	min-width: auto;
 	max-width: 23.1%;
@@ -246,9 +245,34 @@ i
 	margin: 5px 10px;
 	background: #A0A0A0;
 	width: 205px;
+	justify-content: space-around;
 	text-align: center;
 	border-color: #404040;
 	border: 1px solid;
+}
+
+.SortersContanerGeneration
+{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	background: #e0e0e0;
+}
+
+.SortersContanerGeneration div
+{
+	margin: 5px 10px;
+	background: #A0A0A0;
+	width: 205px;
+	align-content: flex-start;
+	text-align: center;
+	border-color: #404040;
+	border: 1px solid;
+}
+
+.SortersContanerGeneration p
+{
+	margin: 0px;
 }
 
 .ButtonContaner

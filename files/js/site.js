@@ -75,10 +75,14 @@ function GenerateGameView(platform)
 			elm.setAttribute("class", "GameViewPlatformsContainer");
 			for (var j = 0; j < data.pl.length; j++)
 			{
-				var child_elm = document.createElement("p");
+				var child_elm = document.createElement("a");
 				child_elm.setAttribute("class", "GameViewPlatforms");
 				child_elm.setAttribute("style", "background:" + data.pl[j].c);
-				child_elm.textContent = data.pl[j].p;
+				child_elm.setAttribute("href", "index.php?visible=" + visible + "&platform=" + data.pl[j].id);
+				var p_text = document.createElement("p");
+				p_text.textContent = data.pl[j].p;
+				p_text.setAttribute("style", "margin:0");
+				child_elm.appendChild(p_text);
 				elm.appendChild(child_elm);
 			}
 			games[i].appendChild(elm);
@@ -121,7 +125,7 @@ function ShowSortPlatforms()
 	else
 	{
 		btn_show.classList.add('show');
-		GenerateSortButtons('pl');
+		GenerateSortButtonsPlatform();
 	}
 }
 
@@ -153,16 +157,60 @@ window.onclick = function(e)
 	}
 }
 
+function GenerateSortButtonsPlatform()
+{
+	var buttons = document.getElementById('btnShow');
+	var data_scr = buttons.getAttribute('data-src');
+	var first_generation = -1;
+	var elm = null;
+	
+	if (data_scr != 0)
+	{
+		var data = JSON.parse(data_scr);
+		for (var i = 0; i < data.pl.length; i++)
+		{
+			if (data.pl[i].gn != null)
+			{	
+				if (first_generation != data.pl[i].gn)
+				{
+					if (elm != null)
+						buttons.appendChild(elm);
+					elm = document.createElement("div");
+					elm.setAttribute("style", "width:100%");
+					elm.setAttribute("class", "SortersContanerGeneration");
+					
+					var elm2 = document.createElement("p");
+					elm2.textContent = "Поколение: " + data.pl[i].gn;
+					elm.appendChild(elm2);
+					
+					first_generation = data.pl[i].gn;
+				}
+				
+				var elm2 = document.createElement("a");
+				elm2.setAttribute("href", "index.php?visible=" + data.pl[i].v + "&platform=" + data.pl[i].p + "&genre=" + data.pl[i].g);
+				elm2.setAttribute("class", "ButtonSort");
+				elm2.textContent = UnescapingCharacters(data.pl[i].name);
+				elm2.setAttribute("style", "background:" + data.pl[i].bg);	
+				elm.appendChild(elm2);
+			}
+		}
+		
+		if (elm != null)
+			buttons.appendChild(elm);
+	}
+}
+
 function GenerateSortButtons(type)
 {
 	var buttons = document.getElementById('btnShow');
 	var data_scr = buttons.getAttribute('data-src');
+	
 	if (data_scr != 0)
 	{
 		var data = JSON.parse(data_scr);
 		for (var i = 0; i < data[type].length; i++)
 		{
-			var elm = document.createElement("a");
+			elm = document.createElement("a");
 			elm.setAttribute("href", "index.php?visible=" + data[type][i].v + "&platform=" + data[type][i].p + "&genre=" + data[type][i].g);
 			elm.setAttribute("class", "ButtonSort");
 			elm.textContent = UnescapingCharacters(data[type][i].name);
