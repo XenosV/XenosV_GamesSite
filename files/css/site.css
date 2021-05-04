@@ -291,3 +291,93 @@ i
 {
 	display: flex;
 }
+
+.GameView
+{
+	background: #e0e0e0;
+	width: 100%;
+	padding: 10px 0px 0px 0px;
+	margin: 0 auto;
+}
+
+.GameDetail
+{
+	display: flex;
+	width: 100%;
+}
+
+.GameDetail .CoverContaner
+{
+	order: 1;
+}
+
+.GameDetail .CoverContaner .Cover
+{
+	width: 205px;
+	margin: 0 10px 0 25px;
+}
+
+.GameDetail .Description
+{
+	flex-grow: 1;
+	order: 2;
+	min-width: 350px;
+}
+
+.GameDetail .Completed
+{
+	margin-right:20px;
+	display:flex;
+	align-items:center;
+	order: 3;
+}
+
+@media all and (max-width: 746px) 
+{
+	.GameDetail
+	{
+		flex-wrap: wrap;
+	}
+	.GameDetail .Description
+	{
+		order: 3;
+	}
+	.GameDetail .Completed
+	{
+		order: 2;
+	}
+}
+
+.GameView .Name
+{
+	font-weight: 700;
+	font-size: 24px;
+	text-align: center;
+}
+
+.GameDetail .Description .Text
+{
+	text-align: left;
+	display: flex;
+	margin: 0 0 5px 0;
+}
+
+.GameDetail .Description .Text img
+{
+	width: 100px;
+}
+
+.GameViewPlatforms_tst
+{
+	padding: 1px 1px 1px 1px;
+	margin: 0px;
+    height: 10px;
+	font-size: 8px;
+    text-align: center;
+    line-height: 10px;
+	border-color: #000000;
+	border: 1px solid;
+	color: #FFFFFF;
+	background: #A0A0A0;
+	min-width: 50px;
+}
