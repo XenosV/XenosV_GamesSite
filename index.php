@@ -128,15 +128,10 @@ class MainHtml
 									// Find images
 									$images = preg_grep('~\.(jpeg|jpg|png)$~', scandir($gallery_images_path));
 									$size = getimagesize($gallery_images_path.current($images));
-									if ($size[0] < 2200)
+									if ($size[0] > 2200)
 									{
 										$size[0] /= 2;
 										$size[1] /= 2;
-									}
-									else
-									{
-										$size[0] /= 4;
-										$size[1] /= 4;
 									}
 									
 									$json_gallery = "";
@@ -145,26 +140,45 @@ class MainHtml
 										$video_name = $gallery_images_path.$video.'#t=0.0';
 										$json_gallery = "{\"gallery\":[{\"type\":\"video\",\"src\":\"$video_name\"}";
 									}
-									foreach($images as &$image)
+									$whitelist = array(
+										'127.0.0.1',
+										'::1'
+									);
+
+									if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist))
 									{
-										$image_name = $gallery_images_path.$image;
-										$json_gallery .= ",{\"type\":\"image\",\"src\":\"$image_name\"}";
+										foreach($images as &$image)
+										{
+											$image_name = $gallery_images_path.$image;
+											$json_gallery .= ",{\"type\":\"image\",\"src\":\"preview.php?resolution=".$size[0]."&src=$image_name\"}";
+										}
 									}
+									else
+									{
+										foreach($images as &$image)
+										{
+											$image_name = $gallery_images_path.$image;
+											$json_gallery .= ",{\"type\":\"image\",\"src\":\"$image_name\"}";
+										}
+									}
+									
 									if ($json_gallery != "")
 										$json_gallery .= "]}";
+									
+									$size[0] /= 2;
+									$size[1] /= 2;
 								
 									$video_name = $gallery_images_path.current($videos).'#t=0.0';
 									echo "<div id=\"gallery".$gallery_index."\" style='display:flex;align-items:center;justify-content:center;width:100%;' data-index='0' data-src='$json_gallery'>";
 										echo "<div style='margin-left:auto;margin-right:10px;'>";
-											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery(this, -1)\"></div>";
+											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery($gallery_index, -1)\"></div>";
 										echo "</div>";
-										echo "<div style=\"max-width:".$size[0]."px;\">";
+										echo "<div style=\"width:".$size[0]."px;height:".$size[1]."px;\">";
 											echo "<video style=\"width:100%;\" controls preload=\"auto\" autoplay muted><source src=\"$video_name\"></source></video>";
 										echo "</div>";
 										echo "<div style='margin-left:10px;margin-right:auto;'>";
-											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery(this, 1)\"></div>";
+											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery($gallery_index, 1)\"></div>";
 										echo "</div>";
-										echo "<script type=\"text/javascript\">GalleryPreload($gallery_index);</script>";
 									echo "</div>";
 									$gallery_index++;
 								echo "</div>";
@@ -429,20 +443,6 @@ class MainHtml
 		}
 		echo "<script src='files/js/site.js'></script>";
 		echo "<script type=\"text/javascript\">InitVar($this->visible);</script>";
-		echo "<script type=\"text/javascript\">
-			function GalleryPreload(id)
-			{
-				var gallery = document.getElementById(\"gallery\" + id);
-				if (gallery.dataset.src != '')
-				{
-					var data = JSON.parse(gallery.dataset.src);
-					var img_next = new Image();
-					img_next.src = data.gallery[1].src;
-					var img_pre = new Image();
-					img_pre.src = data.gallery[data.gallery.length - 1].src;
-				}
-			}
-			</script>";
 		echo '</head>';
 	}
 	
@@ -496,15 +496,14 @@ echo "</html>";
 document.getElementById("BtnPlatforms").addEventListener("click", ShowSortPlatforms, false);
 document.getElementById("BtnGenres").addEventListener("click", ShowSortGenres, false);
 
-function SetGallery(button, increment)
+function SetGallery(id, increment)
 {
-	var gallery = button.parentNode.parentNode.children[1];
-	var data = JSON.parse(button.parentNode.parentNode.dataset.src);
-	var index = (Number(button.parentNode.parentNode.dataset.index) + Number(increment)) % data.gallery.length;
-	button.parentNode.parentNode.dataset.index = index;
-	
-	// TO DO ADD PRELOAD NEXT IMAGE !!!!!
-	/////////////////////////////////////
+	var gallery = document.getElementById("gallery" + id);
+	var data = JSON.parse(gallery.dataset.src);
+	var index = (Number(gallery.dataset.index) + Number(increment));
+	if (index >= data.gallery.length) index = 0;
+	if (index < 0) index = data.gallery.length - 1;
+	gallery.dataset.index = index;
 	
 	var elm = null;
 	if (data.gallery[index].type == "video")
@@ -527,8 +526,8 @@ function SetGallery(button, increment)
 	}
 	if (elm)
 	{
-		gallery.appendChild(elm);
-		gallery.removeChild(gallery.firstChild);
+		gallery.children[1].appendChild(elm);
+		gallery.children[1].removeChild(gallery.children[1].firstChild);
 	}
 }
 </script>
