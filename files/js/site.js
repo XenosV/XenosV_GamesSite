@@ -16,7 +16,7 @@ function InitVar(vis)
 	visible = vis;
 }
 
-function GenerateGameView(platform)
+function GenerateGameView(platform, sort_id)
 {
 	var games = document.getElementsByClassName('GV');
 	
@@ -28,9 +28,9 @@ function GenerateGameView(platform)
 			var game_name = games[i].textContent;
 			games[i].textContent = "";
 			var data = JSON.parse(data_scr);
-			games[i].removeAttribute('data-src');
+			//games[i].removeAttribute('data-src');
 			
-			if ((data.cm <= 1) && (visible == 0))
+			if (data.cm <= 1 && visible == 0 && sort_id == 0)
 				games[i].style.display = "none";
 			
 			// Cover

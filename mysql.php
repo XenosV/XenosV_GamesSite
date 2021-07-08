@@ -22,7 +22,7 @@ class GamesBase
 		$request = $this->mysqli->query(
 		"SELECT
 			games.*, 
-			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc, 
+			group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC SEPARATOR ';') as plt_cc, 
 			group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc 
 		FROM
 			games 
@@ -58,7 +58,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 			"SELECT
 				games.*,
-				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc,
+				group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC SEPARATOR ';') as plt_cc,
 				group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc
 			FROM
 				games
@@ -84,7 +84,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*,
-					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Sort, platforms.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT platforms.Platforms ORDER BY platforms.Generation DESC SEPARATOR ';') as plt_cc,
 					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc
 				FROM
 					games
@@ -112,7 +112,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*,
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
 					group_concat(DISTINCT genres.Genres ORDER BY genres.Genres SEPARATOR '/') as gen_cc
 				FROM
 					games
@@ -140,7 +140,7 @@ class GamesBase
 			$this->sql_games_request = $this->mysqli->query(
 				"SELECT
 					games.*,
-					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Sort, platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
+					group_concat(DISTINCT platforms_t.Platforms ORDER BY platforms_t.Generation DESC SEPARATOR ';') as plt_cc,
 					group_concat(DISTINCT genres_t.Genres ORDER BY genres_t.Genres SEPARATOR '/') as gen_cc
 				FROM
 					games
@@ -181,16 +181,11 @@ class GamesBase
 					join games_genres on games_genres.Game_ID = games.ID
 					join genres on genres.ID = games_genres.Genre_ID
 			WHERE
-				(LOCATE('$game_series', games.Series) and games.Visible > 0) 
+				(LOCATE(\"$game_series\", games.Series) and games.Visible > 0) 
 			GROUP BY
 				games.ID
 			ORDER BY
-				CASE
-					WHEN games.Name REGEXP '^(A|An|The)[[:space:]]' = 1
-					THEN TRIM(SUBSTR(games.Name, INSTR(games.Name ,' ')))
-					ELSE games.Name
-				END,
-				games.Name"
+				games.Year"
 			);
 	}
 	

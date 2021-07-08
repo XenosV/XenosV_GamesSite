@@ -95,8 +95,11 @@ class MainHtml
 									echo "</div>";
 									$text = $this->game_info['gen_cc'];
 									echo "<p class='Text'><b>Жанры:</b> &nbsp; $text</p>";
-									$text = $this->game_info['Series'];
-									echo "<p class='Text'><b>Серия:</b> &nbsp; $text</p>";
+									if ($this->game_info['Series'] != "")
+									{
+										$text = str_replace("%:", "", $this->game_info['Series']);
+										echo "<p class='Text'><b>Серия:</b> &nbsp; $text</p>";
+									}
 									$text = $this->game_info['Year'];
 									echo "<p class='Text'><b>Год выпуска:</b> &nbsp; $text</p>";
 									$text = 'files\img\rating\rating'.$this->game_info['Rating'].'.png';
@@ -135,46 +138,61 @@ class MainHtml
 									}
 									
 									$json_gallery = "";
-									foreach($videos as &$video)
+									if (count($videos) != 0)
 									{
-										$video_name = $gallery_images_path.$video.'#t=0.0';
-										$json_gallery = "{\"gallery\":[{\"type\":\"video\",\"src\":\"$video_name\"}";
+										foreach($videos as &$video)
+										{
+											$video_name = EscapingCharacters($gallery_images_path.$video."#t=0.0");
+											$json_gallery = "{\"gallery\":[{\"type\":\"video\",\"src\":\"$video_name\"},";
+										}
+									}
+									else
+									{
+										$json_gallery = "{\"gallery\":[";
 									}
 									$whitelist = array(
 										'127.0.0.1',
 										'::1'
 									);
-
 									if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist))
 									{
 										foreach($images as &$image)
 										{
-											$image_name = $gallery_images_path.$image;
-											$json_gallery .= ",{\"type\":\"image\",\"src\":\"preview.php?resolution=".$size[0]."&src=$image_name\"}";
+											$image_name = EscapingCharacters($gallery_images_path.$image);
+											$json_gallery .= "{\"type\":\"image\",\"src\":\"preview.php?resolution=".$size[0]."&src=$image_name\"},";
 										}
 									}
 									else
 									{
 										foreach($images as &$image)
 										{
-											$image_name = $gallery_images_path.$image;
-											$json_gallery .= ",{\"type\":\"image\",\"src\":\"$image_name\"}";
+											$image_name = EscapingCharacters($gallery_images_path.$image);
+											$json_gallery .= "{\"type\":\"image\",\"src\":\"$image_name\"},";
 										}
 									}
 									
+									$json_gallery = rtrim($json_gallery, ",");
 									if ($json_gallery != "")
 										$json_gallery .= "]}";
 									
 									$size[0] /= 2;
 									$size[1] /= 2;
 								
-									$video_name = $gallery_images_path.current($videos).'#t=0.0';
 									echo "<div id=\"gallery".$gallery_index."\" style='display:flex;align-items:center;justify-content:center;width:100%;' data-index='0' data-src='$json_gallery'>";
 										echo "<div style='margin-left:auto;margin-right:10px;'>";
 											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery($gallery_index, -1)\"></div>";
 										echo "</div>";
 										echo "<div style=\"width:".$size[0]."px;height:".$size[1]."px;\">";
-											echo "<video style=\"width:100%;\" controls preload=\"auto\" autoplay muted><source src=\"$video_name\"></source></video>";
+											if (count($videos) != 0)
+											{
+												$video_name = $gallery_images_path.current($videos).'#t=0.0';
+												echo "<video style=\"width:100%;height:100%;\" controls preload=\"auto\" autoplay muted><source src=\"$video_name\"></source></video>";
+											}
+											else
+											{
+												$pic_name = $gallery_images_path.current($images);
+												echo "<img style=\"width:100%;height:100%;\" src=\"$pic_name\"></img>";
+											}
 										echo "</div>";
 										echo "<div style='margin-left:10px;margin-right:auto;'>";
 											echo "<div style='width:30px;height:25px;background:#A0A0A0' onclick=\"SetGallery($gallery_index, 1)\"></div>";
@@ -185,6 +203,11 @@ class MainHtml
 							}
 						}
 					echo "</div>";
+					if ($this->game_info['Series'] != "")
+					{
+						$this->games_base->SelectGameSeries($this->game_info['Series']);
+						$this->DrawGamesView();
+					}
 				echo "</div>";
 			}
 			else //////////////////////////// No Game selected //////////////////////////////////
@@ -268,13 +291,15 @@ class MainHtml
 				}
 				else
 				{
-					if (($complete > 1) || ($this->visible))
+					if (($complete > 1) || ($this->visible) || ($this->sort_id))
 					{
 						echo "<div class='GV' data-src=0 style=''>";
 						$index++;
 					}
 					else
+					{
 						echo "<div class='GV' data-src=0 style='display:none;'>";
+					}
 						$cover_name = "/cover.jpg";
 						$style = "style=\"margin-top:0px;margin-bottom:0px;\"";
 						if ($this->sort_platform > 1)
@@ -343,7 +368,7 @@ class MainHtml
 		if (isset($_GET['visible']) && is_numeric($_GET['visible']))
 			$this->visible = $_GET['visible'];
 		else
-			$this->visible = 0;
+			$this->visible = 1;
 		
 		if ($this->sort_id != 0)
 			$this->game_info = $this->games_base->getGameInfo($this->sort_id);
@@ -450,7 +475,8 @@ class MainHtml
 	{
 		$vis = $this->getVisible();
 		$pl_name = iconv("UTF-8", "ASCII//TRANSLIT", $this->getSortPlatformName());
-		echo "<body onload='GenerateGameView(\"$pl_name\")'>";	
+		$sort_id = $this->sort_id;
+		echo "<body onload='GenerateGameView(\"$pl_name\", $sort_id)'>";	
 			echo "<div class='SiteBase'>";
 				$this->CreateMainGalery();
 			echo"</div>";
@@ -509,20 +535,20 @@ function SetGallery(id, increment)
 	if (data.gallery[index].type == "video")
 	{
 		elm = document.createElement("video");
-		elm.setAttribute("style", "width:100%");
+		elm.setAttribute("style", "width:100%;height:100%;");
 		elm.setAttribute("autoplay", "autoplay");
 		elm.muted = true;
 		elm.setAttribute("controls", "controls");
 		
 		var elm2 = document.createElement("source");
-		elm2.setAttribute("src", data.gallery[index].src);
+		elm2.setAttribute("src", UnescapingCharacters(data.gallery[index].src));
 		elm.appendChild(elm2);
 	}
 	else
 	{
 		elm = document.createElement("img");
 		elm.setAttribute("style", "width:100%");
-		elm.setAttribute("src", data.gallery[index].src);
+		elm.setAttribute("src", UnescapingCharacters(data.gallery[index].src));
 	}
 	if (elm)
 	{
